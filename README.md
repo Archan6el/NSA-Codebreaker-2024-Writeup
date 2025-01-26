@@ -57,7 +57,6 @@ Unzipping it gives us a ton of files, most of which are unimportant:
 The spreadsheet is gigantic, with 11,550 rows. No way are we going through that by hand. 
 
 Briefly scrolling through the spreadsheet, there's a lot of things that are repeated, specifically emails and addresses. I figured that anything malicious would probably only show up once, so using the `UNIQUE` function in Excel, I isolated all unique entries. Starting from the bottom upwards, most of the entries are order IDs, which make sense since they should be unique. However, the first odd entry when going from the bottom up is an address, `058 Flowers Square Apt. 948, Port Ryanshire, NE 05823`:
-![image](https://github.com/user-attachments/assets/953a611d-f720-46ef-ab3a-79676d7936f3)
 
 ![image](https://github.com/user-attachments/assets/b8bee599-c93d-4f70-be84-7218605ff687)
 
@@ -68,6 +67,11 @@ It is associated with "Guardian Armaments"
 And when looking at all other Guardian Armaments entires, they use a different address, with the below image being a small example
 
 ![image](https://github.com/user-attachments/assets/990e3852-c2f4-46b4-9e61-09f629b7b70f)
+
+`058 Flowers Square Apt. 948, Port Ryanshire, NE 05823` is the only different address used by Guardian Armamanets, meaning that is likely fraudulent, and we are right! Submitting it's Order ID, `GUA0094608` getes us our first badge
+
+## Task 2 - Driving Me Crazy - (Forensics, DevOps)
+
 
 
 
