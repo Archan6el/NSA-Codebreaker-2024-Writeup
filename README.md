@@ -44,6 +44,7 @@ Provide the order id associated with the order most likely to be fraudulent.
 ```
 
 Okay so now we're actually getting into the actual challenges. We need to find the order ID associated with the fraudulent order for this one. Downloading `shipping.db`, I initally thought it was some kind of database file, but running `file` on it reveals that it is a Zip file. 
+
 ![image](https://github.com/user-attachments/assets/92c33ad0-5226-4ad3-b326-d2a3c8a5f2ee)
 
 Unzipping it gives us a ton of files, most of which are unimportant:
