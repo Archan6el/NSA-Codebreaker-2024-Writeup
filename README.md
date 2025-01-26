@@ -21,7 +21,7 @@ This is my writeup of the 2024 NSA Codebreaker Challenges
 >Once there, type /task0 in the #bot-commands channel. Follow the prompts and paste the answer the bot gives you below.
 
 
-Just join the CBC Discord and follow the steps ¯\_(ツ)_/¯
+Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
 
 ## Task 1 - No Token Left Behind - (File Forensics)
 
