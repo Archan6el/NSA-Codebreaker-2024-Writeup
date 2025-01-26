@@ -20,7 +20,7 @@ This is my writeup of the 2024 NSA Codebreaker Challenges
 >
 >Once there, type /task0 in the #bot-commands channel. Follow the prompts and paste the answer the bot gives you below.
 
-# Solve:
+### Solve:
 
 Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
 
@@ -47,7 +47,7 @@ Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
 >
 >Provide the order id associated with the order most likely to be fraudulent.
 
-# Solve:
+### Solve:
 
 Okay so now we're actually getting into the actual challenges. We need to find the order ID associated with the fraudulent order for this one. Downloading `shipping.db`, I initally thought it was some kind of database file, but running `file` on it reveals that it is a Zip file. 
 
