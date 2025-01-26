@@ -2,6 +2,11 @@
 
 This is my writeup of the 2024 NSA Codebreaker Challenges
 
+## Table of Contents
+- [Task 0 - (Community of Practice, Discord Server)](#task-0---community-of-practice-discord-server)
+- [Task 1 - No Token Left Behind - (File Forensics)](#task-1---no-token-left-behind---file-forensics)
+- [Task 2 - Driving Me Crazy - (Forensics, DevOps)](#task-2---driving-me-crazy---forensics-devops)
+
 ## Task 0 - (Community of Practice, Discord Server)
 
 **Prompt 0:**
@@ -68,7 +73,7 @@ And when looking at all other Guardian Armaments entires, they use a different a
 
 ![image](https://github.com/user-attachments/assets/990e3852-c2f4-46b4-9e61-09f629b7b70f)
 
-`058 Flowers Square Apt. 948, Port Ryanshire, NE 05823` is the only different address used by Guardian Armamanets, meaning that is likely fraudulent, and we are right! Submitting it's Order ID, `GUA0094608` getes us our first badge
+`058 Flowers Square Apt. 948, Port Ryanshire, NE 05823` is the only different address used by Guardian Armamanets, meaning that is likely fraudulent, and we are right! Submitting it's Order ID, `GUA0094608` gets us our first badge
 
 ## Task 2 - Driving Me Crazy - (Forensics, DevOps)
 
