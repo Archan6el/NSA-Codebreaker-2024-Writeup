@@ -52,7 +52,9 @@ Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
 >
 >DoD procurement records (shipping.db)
 >
->Prompt: Provide the order id associated with the order most likely to be fraudulent.
+>Prompt:
+>
+>Provide the order id associated with the order most likely to be fraudulent.
 
 ### Solve:
 
