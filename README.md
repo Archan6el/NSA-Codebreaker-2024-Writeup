@@ -57,7 +57,7 @@ Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
 
 ### Solve:
 
-Okay so now we're actually getting into the actual challenges. We need to find the order ID associated with the fraudulent order for this one. Downloading `shipping.db`, I initally thought it was some kind of database file, but running `file` on it reveals that it is a Zip file. 
+Okay so now we're actually getting into the actual challenges. We need to find the order ID associated with the fraudulent order for this one. After downloading `shipping.db`, despite the `.db` extension, running `file` on it reveals that it is a Zip file. Let's unzip it and see what we get. 
 
 ![image](https://github.com/user-attachments/assets/92c33ad0-5226-4ad3-b326-d2a3c8a5f2ee)
 
