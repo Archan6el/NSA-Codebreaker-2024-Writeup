@@ -61,7 +61,7 @@ Okay so now we're actually getting into the actual challenges. We need to find t
 
 ![image](https://github.com/user-attachments/assets/92c33ad0-5226-4ad3-b326-d2a3c8a5f2ee)
 
-Unzipping it gives us a ton of files, most of which are unimportant:
+We get a ton of files, most of which are unimportant:
 
 ![image](https://github.com/user-attachments/assets/f48b6011-a501-4c99-ba98-f0c7d3433bf2)
 
