@@ -76,7 +76,7 @@ Briefly scrolling through the spreadsheet, there's a lot of things that are repe
 
 ![image](https://github.com/user-attachments/assets/b8bee599-c93d-4f70-be84-7218605ff687)
 
-It is associated with "Guardian Armaments", and has an order ID of `GUA0094608`
+It is associated with "Guardian Armaments", and is part of an entry that has an order ID of `GUA0094608`
 
 ![image](https://github.com/user-attachments/assets/2442407c-9849-4689-ab67-105890b04f90)
 
