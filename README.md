@@ -80,7 +80,7 @@ It is associated with "Guardian Armaments"
 
 ![image](https://github.com/user-attachments/assets/2442407c-9849-4689-ab67-105890b04f90)
 
-And when looking at all other Guardian Armaments entires, they use a different address, `0500 Fred Plaza...`, with the below image being a small example
+And when looking at all other Guardian Armaments entires, they use a different address, `0050 Fred Plaza Suite...`, with the below image being a small example
 
 ![image](https://github.com/user-attachments/assets/990e3852-c2f4-46b4-9e61-09f629b7b70f)
 
