@@ -53,3 +53,6 @@ And when looking at all other Guardian Armaments entires, they use a different a
 `058 Flowers Square Apt. 948, Port Ryanshire, NE 05823` is the only different address used by Guardian Armaments, meaning that is likely fraudulent, and we are right!
 
 Submitting its Order ID, `GUA0094608` gets us our first badge
+
+**Response:**
+>Great Work! That order does look fishy...
