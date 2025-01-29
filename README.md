@@ -11,32 +11,6 @@ This is my writeup of the 2024 NSA Codebreaker Challenges
 >You have returned to NSA on your final Cooperative Education tour and are visiting your friend Aaliyah who is currently employed full-time in the Intelligence Analysis Development Program. Intelligence Analysts are always scouring through collected Signals Intelligence (SIGINT) for threat indicators. Aaliyah recently attended a briefing that highlighted Nation-State Advanced Persistent Threats (APT) targeting our Defense Industrial Base (DIB) contractors.
 
 ## Tasks
-- [Task 0 - (Community of Practice, Discord Server)](#task-0---community-of-practice-discord-server)
+- [Task 0 - (Community of Practice, Discord Server)](Task0.md)
 - [Task 1 - No Token Left Behind - (File Forensics)](Task1.md)
 - [Task 2 - Driving Me Crazy - (Forensics, DevOps)](Task2.md)
-
-## Task 0 - (Community of Practice, Discord Server)
-
-**Prompt 0:**
-
-
->As a participant in the Codebreaker Challenge, you are invited to join the New Mexico Tech Codebreaker Challenge Community of Practice!
->This is the 3rd year that NMT has partnered with the NSA Codebreaker Challenge. Its purpose remains to give students interested in cybersecurity
->a place to talk about Codebreaker, cybersecurity, and other related topics.
->
->To complete this task, first, join the Discord server. https://discord.gg/SWYCM5xr4N
->
->Once there, type /task0 in the #bot-commands channel. Follow the prompts and paste the answer the bot gives you below.
-
-### Solve:
-
-Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
-
-
-
-## Task 2 - Driving Me Crazy - (Forensics, DevOps)
-
-
-
-
-
