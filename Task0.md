@@ -14,3 +14,6 @@
 ### Solve:
 
 Just join the CBC Discord and follow the steps ¯\\_(ツ)_/¯
+
+**Response:**
+>Welcome to the community! Remember, challenge tasks must be done solo and NO SPOILERS! Use 'Get Help' for a direct line to NSA.
