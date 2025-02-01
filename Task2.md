@@ -248,7 +248,7 @@ And sure enough if we run `ls -lR` (this being a small snippet of the output)...
 
 At nearly each step of the process, each snapshot has its own set of files, which may very well have their own hashes.
 
-Running `find . -type f -exec sha256sum {} + | awk '{print $1}' | sort | uniq` will print them all to the console for us, resulting in a pretty long output of sha256 hashes. Waaaay longer than what we had before:
+Running `find . -type f -exec sha256sum {} + | awk '{print $1}' | sort | uniq` will print them all to the console for us, resulting in a pretty long output of SHA256 hashes. Waaaay longer than what we had before:
 
 ```
 00d0d281c60c8abc7a78dea8be550b838555651f1c84b9629eb972ab373178b1
