@@ -61,7 +61,7 @@ That file ends up being `logseq291502518216656`, which is also the only `logseq`
 
 ![image](https://github.com/user-attachments/assets/f9091675-d7eb-492b-93d5-b87dc02a770b)
 
-Now starting from this first file, we just add it to our pool. follow the destination GUID to the next `logseq` file, add that to our pool, and continue until we've added all files. 
+Now starting from this first file, we just add it to our pool. We then follow the destination GUID to the next `logseq` file, and add that to our pool, and continue until we've added all files. 
 
 Of course, I didn't want to do this by hand, so I made a bash script to do it. 
 
