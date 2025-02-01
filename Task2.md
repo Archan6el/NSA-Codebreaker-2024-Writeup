@@ -149,7 +149,7 @@ Submitting the hashes of these files was *not* the answer. I actually got stuck 
 
 It wasn't until after I carefully re-read the prompt that I realized what exactly they were asking for. 
 
-**All** SHA256 hashes that we can extract. 
+***All*** SHA256 hashes that we can extract. 
 
 We are adding the ZFS volumes incrementally, and then taking a look at the final result. What if along the way, midway through putting the ZFS volumes together, we have access to different files, or at the very least, files that have different hashes? 
 
