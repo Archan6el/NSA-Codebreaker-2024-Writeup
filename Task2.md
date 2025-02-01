@@ -21,31 +21,35 @@
 
 ### Solve:
 
-We need to provide a list of unnique SHA256 of all hashes that we can find from the compressed disk backup. First of all of course, let's run `tar -xvf` on the archive and see what we get
+We need to provide a list of all unique SHA256 hashes that we can find from the compressed disk backup we are given. 
+
+First of all, let's run `tar -xvf` on the archive and see what we get
 
 ![image](https://github.com/user-attachments/assets/8238973b-17d9-4248-af7b-227e53e31eb5)
 
-A whole bunch of these `logseq` files. Running the `file` command on one of them, we see that they are part of a ZFS snapshot. 
+A whole bunch of these `logseq` files. 
+
+After running the `file` command on one of them, we see that they are part of a ZFS snapshot. 
 
 ![image](https://github.com/user-attachments/assets/7dedd90d-0032-4933-9e6e-525947bc2cf4)
 
 >Note for my fellow WSL2 users, seemingly zfs doesn't work on WSL2. In order to solve this challenge, I used a Kali virtualbox VM
 
-When I was solving this challenge, I viewed all these `logseq` files as being essentially parts of the data on the drive, we just need to find a way to put it all together and mount it. 
+All of these `logseq` files are essentially parts of the data on the drive, we just need to find a way to put it all together and mount it. 
 
-After doing some research on how we can access the data in the broken up image, we have to create a a ZFS Pool and use an empty file to act as a disk image. 
+After doing some research on how we can access the data in the broken up drive, I found that you have to create a ZFS Pool and use an empty file to act as a disk image. 
 
 First of all, the empty file. I used the `truncate` command to make a temporary file for this challenge, and placed it in my `tmp` directory:
 
 `sudo truncate -s 10G /tmp/task2`
 
-Now that we have the empty file, we can create our pool. I named my pool `task2pool`:
+Now that we have the empty file, we can create our pool using it. I named my pool `task2pool`:
 
 `sudo zpool create task2pool /tmp/task2`
 
 Ok we have our pool created and ready to go. So now how do we go about putting these `logseq` files together?
 
-After some more research, I found that we can add the files to our pool using the following syntax:
+After some more research, I found that we can add the files to our pool using the following command:
 
 `sudo zfs receive -F task2pool/ltfs < logseq_file`
 
@@ -65,7 +69,7 @@ Now starting from this first file, we just add it to our pool. We then follow th
 
 Of course, I didn't want to do this by hand, so I made a bash script to do it. 
 
-```
+```bash
 #!/bin/bash
 
 # Function to extract GUID from a snapshot file
@@ -137,7 +141,9 @@ Running `find . -type f -exec sha256sum {} + | awk '{print $1}' | sort | uniq` g
 
 ![image](https://github.com/user-attachments/assets/ace902f4-ed2c-4ded-8bae-29aff2251d21)
 
-Challenge complete right? Wrong. It's not going to be that easy. Submitting the hashes of these files was *not* the answer. I actually got stuck for a little bit here thinking I had the solution, and didn't know where I was doing wrong. I have the hashes of the files that are in the disk backup, which is seemingly all we need. What more could you want?
+Challenge complete right? Wrong. It's not going to be that easy. 
+
+Submitting the hashes of these files was *not* the answer. I actually got stuck for a little bit here thinking I had the solution, and didn't know where I was doing wrong. I have the hashes of the files that are in the disk backup, which is seemingly all we need. What more could you want?
 
 It wasn't until after I carefully re-read the prompt that I realized what exactly they were asking for. 
 
@@ -147,7 +153,7 @@ We are adding the ZFS volumes incrementally, and then taking a look at the final
 
 I modify our bash script from earlier to essentially mount the filesystem after we add a new volume, so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
 
-```
+```bash
 #!/bin/bash
 
 # Function to extract GUID from a snapshot file
@@ -186,7 +192,7 @@ add_to_pool() {
 # Start with an initial file
 initial_file="logseq291502518216656"
 
-# Outer loop to handle multiple files
+# Outer loop to handle multiple files. Loop from 1 to 20 since there are 20 logseq files
 for i in {1..20}; do
     # Initialize current_file for this iteration of outer loop
     current_file="$initial_file"
@@ -260,7 +266,7 @@ Over 100 hashes
 ...
 ```
 
-Submitting this gets us our second badge!
+And submitting this gets us our second badge!
 
 **Results:**
 >That is correct!
