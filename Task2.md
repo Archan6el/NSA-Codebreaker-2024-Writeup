@@ -242,7 +242,7 @@ In the script, I mounted everything in `/mnt/task2pool`. If we go there and run 
 
 ![image](https://github.com/user-attachments/assets/228fe1bf-d9f6-412d-aae6-e6a79fcaf53f)
 
-And sure enough if we run `ls -lR` (this being a small snippet of the output)
+And sure enough if we run `ls -lR` (this being a small snippet of the output)...
 
 ![image](https://github.com/user-attachments/assets/261a16f3-d37e-4c2f-a926-1402b0405538)
 
