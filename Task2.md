@@ -35,9 +35,9 @@ After running the `file` command on one of them, we see that they are part of a 
 
 >Note for my fellow WSL2 users, seemingly zfs doesn't work on WSL2. In order to solve this challenge, I used a Kali virtualbox VM
 
-All of these `logseq` files are essentially parts of the data on the drive, we just need to find a way to put it all together and mount it. 
+After doing some googling on ZFS, I learn that all of these `logseq` files are essentially parts of the data on the drive, we just need to find a way to put them all together and mount or access the final result. 
 
-After doing some research on how we can access the data in the broken up drive, I found that you have to create a ZFS Pool and use an empty file to act as a disk image. 
+After doing some research on how we can access the data in the broken up drive, I found that you have to create a ZFS Pool and use an empty file to act as a virtual disk image. 
 
 First of all, the empty file. I used the `truncate` command to make a temporary file for this challenge, and placed it in my `tmp` directory:
 
@@ -47,15 +47,15 @@ Now that we have the empty file, we can create our pool using it. I named my poo
 
 `sudo zpool create task2pool /tmp/task2`
 
-Ok we have our pool created and ready to go. So now how do we go about putting these `logseq` files together?
+OK we have our pool created and ready to go. So now how do we go about putting these `logseq` files together?
 
 After some more research, I found that we can add the files to our pool using the following command:
 
 `sudo zfs receive -F task2pool/ltfs < logseq_file`
 
-But there's one issue. We have to add them in order. 
+But there's one issue. We have to add / recieve them in order, `logseq` files are incremental. 
 
-How are we supposed to know which goes first? Well, looking back at when we ran file on one of the `logseq` files, we find two interesting things. 
+How are we supposed to know which goes first? Well, looking back at when we ran `file` on one of the `logseq` files, we find two interesting things. 
 
 ![image](https://github.com/user-attachments/assets/8710e057-96e6-4732-b552-a9e968b0e4fa)
 
@@ -65,7 +65,7 @@ That file ends up being `logseq291502518216656`, which is also the only `logseq`
 
 ![image](https://github.com/user-attachments/assets/f9091675-d7eb-492b-93d5-b87dc02a770b)
 
-Now starting from this first file, we just add it to our pool. We then follow the destination GUID to the next `logseq` file, and add that to our pool, and continue until we've added all files. 
+Now starting from this first file, we add it to our pool. We then follow the destination GUID to the next `logseq` file, and add that to our pool, and continue until we've added all files. 
 
 Of course, I didn't want to do this by hand, so I made a bash script to do it. 
 
@@ -129,11 +129,11 @@ while [ -n "$current_file" ]; do
 done
 ```
 
-After running this bash script, we should have all files added to our pool. Running `zfs list`, we should see our mountpoint so that we know where to go to. 
+After running this bash script, we should have all files added to our pool. Running `zfs list`, we should see our mountpoint so that we know where to go to look at the final product. 
 
 ![image](https://github.com/user-attachments/assets/5d0c0712-6783-4777-bc34-92e5c94f0add)
 
-So `/task2pool/ltfs` is where our data is. If we `cd` there, we find a `planning` directory, and within planning, a `logseq` and `pages` directory. 
+So `/task2pool/ltfs` is where our data is. If we `cd` there, we find a `planning` directory, and within that, a `logseq` and `pages` directory. 
 
 ![image](https://github.com/user-attachments/assets/7494b3f4-ad2b-4660-9de4-457b7a364bc4)
 
@@ -141,17 +141,19 @@ Running `find . -type f -exec sha256sum {} + | awk '{print $1}' | sort | uniq` g
 
 ![image](https://github.com/user-attachments/assets/ace902f4-ed2c-4ded-8bae-29aff2251d21)
 
-Challenge complete right? Wrong. It's not going to be that easy. 
+Challenge complete right? 
 
-Submitting the hashes of these files was *not* the answer. I actually got stuck for a little bit here thinking I had the solution, and didn't know where I was doing wrong. I have the hashes of the files that are in the disk backup, which is seemingly all we need. What more could you want?
+Wrong. It's not going to be that easy. 
+
+Submitting the hashes of these files was *not* the answer. I actually got stuck for a little bit here thinking I had the solution, and didn't know where I was going wrong. I have the hashes of the files that are in the disk backup, which is seemingly all we need. What more could you want?
 
 It wasn't until after I carefully re-read the prompt that I realized what exactly they were asking for. 
 
-**All** files that we can extract. 
+**All** SHA256 hashes that we can extract. 
 
 We are adding the ZFS volumes incrementally, and then taking a look at the final result. What if along the way, midway through putting the ZFS volumes together, we have access to different files, or at the very least, files that have different hashes? 
 
-I modify our bash script from earlier to essentially mount the filesystem after we add a new volume, so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
+I modify our bash script from earlier to essentially mount the filesystem after we add a new `logseq` file, so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
 
 ```bash
 #!/bin/bash
@@ -240,7 +242,7 @@ In the script, I mounted everything in `/mnt/task2pool`. If we go there and run 
 
 ![image](https://github.com/user-attachments/assets/228fe1bf-d9f6-412d-aae6-e6a79fcaf53f)
 
-And sure enough if we run ls -lR
+And sure enough if we run `ls -lR`
 
 ![image](https://github.com/user-attachments/assets/261a16f3-d37e-4c2f-a926-1402b0405538)
 
