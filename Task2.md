@@ -21,7 +21,7 @@
 
 ### Solve:
 
-We need to provide a list of unnique SHA256 of all hashes that we can find from the compressed disk backup. First of all of course, let's extract the files from the compressed file and see what we get
+We need to provide a list of unnique SHA256 of all hashes that we can find from the compressed disk backup. First of all of course, let's run `tar -xvf` on the archive and see what we get
 
 ![image](https://github.com/user-attachments/assets/8238973b-17d9-4248-af7b-227e53e31eb5)
 
