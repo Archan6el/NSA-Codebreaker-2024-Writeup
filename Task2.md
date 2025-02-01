@@ -153,7 +153,7 @@ It wasn't until after I carefully re-read the prompt that I realized what exactl
 
 We are adding the ZFS volumes incrementally, and then taking a look at the final result. What if along the way, midway through putting the ZFS volumes together, we have access to different files, or at the very least, files that have different hashes? 
 
-I modify our bash script from earlier to essentially mount the filesystem after we add a new `logseq` file, so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
+I modify our bash script from earlier to essentially mount the filesystem after we add a new `logseq` file so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
 
 ```bash
 #!/bin/bash
