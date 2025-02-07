@@ -33,7 +33,7 @@ After running the `file` command on one of them, we see that they are part of a 
 
 ![image](https://github.com/user-attachments/assets/7dedd90d-0032-4933-9e6e-525947bc2cf4)
 
->Note for my fellow WSL2 users, seemingly zfs doesn't work on WSL2. In order to solve this challenge, I used a Kali virtualbox VM
+>Note for my fellow WSL2 users, zfs seemingly doesn't work on WSL2. In order to solve this challenge, I used a Kali virtualbox VM
 
 After doing some googling on ZFS, I learn that all of these `logseq` files are essentially parts of the data on the drive, we just need to find a way to put them all together and mount or access the final result. 
 
