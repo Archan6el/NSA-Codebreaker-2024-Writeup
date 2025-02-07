@@ -14,3 +14,4 @@ This is my writeup of the 2024 NSA Codebreaker Challenges
 - [Task 0 - (Community of Practice, Discord Server)](Task0.md)
 - [Task 1 - No Token Left Behind - (File Forensics)](Task1.md)
 - [Task 2 - Driving Me Crazy - (Forensics, DevOps)](Task2.md)
+- [Task 3 - How did they get in? - (Reverse Engineering, Vulnerability Research)](Task3.md)
