@@ -238,7 +238,7 @@ for i in {1..20}; do
 done
 ```
 
-In the script, I mounted everything in `/mnt/task2pool`. If we go there and run `ls`, we see:
+In the script, I mounted everything in `/mnt/task2pool`. If we go there and run `ls`, we see 20 snapshot directories, which makes sense since there are 20 `logseq` files:
 
 ![image](https://github.com/user-attachments/assets/228fe1bf-d9f6-412d-aae6-e6a79fcaf53f)
 
