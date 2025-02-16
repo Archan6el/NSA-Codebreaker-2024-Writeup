@@ -782,4 +782,258 @@ long main.(*SeedgenAuthClient).auth
 ```
 </details>
 
-Let's look at what it's doing. 
+Let's look at what it's doing. `target` starts as the randomly generated `seed` value. `auth` then takes the username, and loops through it 4 bytes (characters) at a time. In each iteration, it Xor's `target` with the 4 byte chunk. After it finishes looping through the username and doing all the Xor logic, it checks to see if the final result equals `0x7032f1e8`. So our goal is to find the username (which we already know), seed, and count that once going through the Xor logic, will equal `0x7032f1e8`.
+
+Technically, we could just call `GetSeed` a bunch of times, but that would take forever. The simplest way would be to recreate all this logic and run it locally. There's just one issue, which is the randomly generated number. I thought it would change each time, which would make it impossible to do locally, but after resetting the `server` executable, we can see that the seed values at the corresponding counts are the same each time
+
+![image](https://github.com/user-attachments/assets/7c21daea-de18-4a52-98bc-62015718c8fe)
+
+Or in other words, count 1 is always the seed 8074660958352453125, count 2 is always the seed 3009302561299014827, etc, etc every time. This means that the rando number generator is seeded, we just have to find what the seed is. 
+
+In Ghidra, we can find the function, `math/rand.(*Rand).Seed`
+
+![image](https://github.com/user-attachments/assets/c0aba82b-ab3a-4409-adf3-d604de833792)
+
+Back in gdb, let's set a breakpoint there.
+
+![image](https://github.com/user-attachments/assets/07170d5f-6c9f-447a-9eac-151af8c6b3bc)
+
+If we run this, we immediately hit the breakpoint, and we can get our seed value!
+
+![image](https://github.com/user-attachments/assets/0b0b4992-1cbe-4a31-b500-fe06f35a58e0)
+
+It's `0x378f96687bfa0`
+
+We have everything we need, let's start making our solve. We will continuously generate numbers using the seeded random number generator, take it and the username `jasper_04044`, go through the Xor logic, and check to see if it equals `0x7032f1e8`. We'll code the solve in Go since the `server` executable uses specifically Go's random number generator. 
+
+<details>
+	<Summary>Click to expand solve.go</Summary>
+
+ ```Go
+package main
+
+import (
+	"encoding/binary"
+	"fmt"
+	"math/rand"
+)
+
+const (
+	goal uint32 = 0x7032f1e8
+)
+
+
+func simulateXOR(seed uint64, username string) (bool, uint64) {
+    usernameBytes := []byte(username)
+
+    uVar2 := seed // Initialize with seed value
+
+    i := 0
+   
+    for i < len(usernameBytes) {
+        var chunk uint32
+
+        // Access 4 bytes at a time or less (pad smaller chunks)
+        if len(usernameBytes) - i >= 4 {
+            chunk = binary.LittleEndian.Uint32(usernameBytes[i : i+4])
+           
+        } else {
+            // Process remaining bytes based on how many are left
+            switch len(usernameBytes) - i {
+            case 3:
+                chunk = uint32(usernameBytes[i]) |
+                    uint32(usernameBytes[i+1])<<8 |
+                    uint32(usernameBytes[i+2])<<16
+            case 2:
+                chunk = uint32(usernameBytes[i]) |
+                    uint32(usernameBytes[i+1])<<8
+            case 1:
+                chunk = uint32(usernameBytes[i])
+            }
+        }
+
+        // XOR with the current chunk, casting uVar2 to uint before XORing
+        //uVar2 ^= uint64(chunk) 
+        uVar2 = uint64(uint32(uVar2) ^ chunk)
+
+        // Increment by 4 for the next chunk
+        i += 4
+    }
+
+    // Cast uVar2 to uint32 for the final comparison
+    finalValue := uint32(uVar2)
+    return finalValue == goal, uVar2
+}
+
+func main() {
+	// The seed value got earlier
+	seed := uint64(0x378f96687bfa0)
+
+	// Set up the random number generator with the seed
+	rand.Seed(int64(seed))
+
+	// Username for XOR simulation
+	username := "jasper_04044"
+
+	// Start a counter to track attempts
+	var attempts int64 = -1
+	//rand.Int63() // 63-bit random value
+
+
+	for {
+		attempts++
+		
+		// Generate a new random seed value based on the original seed
+		currentSeed := rand.Int63() // 63-bit random value
+        
+  		if attempts == 1 || attempts == 2 || attempts == 3 {
+			fmt.Printf("Count %d with seed: %d\n", attempts, currentSeed)
+		}
+
+		// Simulate XOR logic with the generated random seed and username
+		success, finalUVar4 := simulateXOR(uint64(currentSeed), username)
+		
+		if success {
+			// Print seed and count if match is found
+			fmt.Printf("Match found! Final uVar4: %08x\n", finalUVar4)
+			fmt.Printf("Seed: %d\n", currentSeed)   // Print the seed
+			fmt.Printf("Count: %d\n", attempts)  // Print the count (attempts)
+			break
+		}
+
+	}
+	
+}
+
+```
+</details>
+
+I print the first few attempts to see if the seed aligns with the count. We initialize `attempts` to -1, because if we start at 0, the seed will be 1 off from the count. 
+
+Running this with `go run solve.go`, it takes a while, but eventually finishes. We get the output:
+
+![image](https://github.com/user-attachments/assets/195f5e0e-5cc1-4d78-8c00-1b54eb51a8be)
+
+Is this our answer?? I submit `{"username":"jasper_04044","seed":"7571067976073007827","count":"1073639578"}` but it still says it's incorrect. What the heck are we doing wrong, we have the answer right here!
+
+It's at that point that I realized a fatal mistake I was making. 
+
+Remember when we were using gdb to find out what was stored in `param_7[2]`, and found out that it was the seed? Remember the first number we saw was `6205117966191793308`? But instead, the *next* seed, `8074660958352453125` is what got printed. Even though `7571067976073007827` is the correct seed that along with the username would pass the Xor logic, what would get printed to the screen? The *next* seed. The prompt didn't ask for the correct seed, username, and count combo to pass the Xor logic, it asked for the correct seed, username, and count combo that would be **logged** once successfully leveraged. 
+
+I tweak the code to print the next seed after we pass the Xor logic
+
+<details>
+<Summary>Click to expand solve.go</Summary>
+
+ ```Go
+package main
+
+import (
+	"encoding/binary"
+	"fmt"
+	"math/rand"
+)
+
+const (
+	goal uint32 = 0x7032f1e8
+)
+
+
+func simulateXOR(seed uint64, username string) (bool, uint64) {
+    usernameBytes := []byte(username)
+
+    uVar2 := seed // Initialize with seed value
+
+    i := 0
+   
+    for i < len(usernameBytes) {
+        var chunk uint32
+
+        // Access 4 bytes at a time or less (pad smaller chunks)
+        if len(usernameBytes) - i >= 4 {
+            chunk = binary.LittleEndian.Uint32(usernameBytes[i : i+4])
+           
+        } else {
+            // Process remaining bytes based on how many are left
+            switch len(usernameBytes) - i {
+            case 3:
+                chunk = uint32(usernameBytes[i]) |
+                    uint32(usernameBytes[i+1])<<8 |
+                    uint32(usernameBytes[i+2])<<16
+            case 2:
+                chunk = uint32(usernameBytes[i]) |
+                    uint32(usernameBytes[i+1])<<8
+            case 1:
+                chunk = uint32(usernameBytes[i])
+            }
+        }
+
+        // XOR with the current chunk, casting uVar2 to uint before XORing
+        //uVar2 ^= uint64(chunk) 
+        uVar2 = uint64(uint32(uVar2) ^ chunk)
+
+        // Increment by 4 for the next chunk
+        i += 4
+    }
+
+    // Cast uVar2 to uint32 for the final comparison
+    finalValue := uint32(uVar2)
+    return finalValue == goal, uVar2
+}
+
+func main() {
+	// The seed value got earlier
+	seed := uint64(0x378f96687bfa0)
+
+	// Set up the random number generator with the seed
+	rand.Seed(int64(seed))
+
+	// Username for XOR simulation
+	username := "jasper_04044"
+
+	// Start a counter to track attempts
+	var attempts int64 = -1
+	//rand.Int63() // 63-bit random value
+
+
+	for {
+		attempts++
+		
+		// Generate a new random seed value based on the original seed
+		currentSeed := rand.Int63() // 63-bit random value
+        
+  		if attempts == 1 || attempts == 2 || attempts == 3 {
+			fmt.Printf("Count %d with seed: %d\n", attempts, currentSeed)
+		}
+
+		// Simulate XOR logic with the generated random seed and username
+		success, finalUVar4 := simulateXOR(uint64(currentSeed), username)
+		
+		if success {
+			// Print seed and count if match is found
+			fmt.Printf("Match found! Final uVar4: %08x\n", finalUVar4)
+			fmt.Printf("Seed: %d\n", currentSeed)   // Print the seed
+			fmt.Printf("Count: %d\n", attempts)  // Print the count (attempts)
+ 			fmt.Printf("Next seed: %d\n", rand.Int63())
+			break
+		}
+
+	}
+	
+}
+```
+
+</details>
+
+This time we get the output:
+
+![image](https://github.com/user-attachments/assets/920deca2-fa73-45ea-bb9e-7537b95f02f8)
+
+Therefore our answer is 
+
+`{"username":"jasper_04044","seed":"5838753747453732554","count":"1073639578"}`
+
+And with that, we have finally solved Task 3. Took a while, huh?
+
+**Results:**
+>So that's how they leveraged their tokens!
