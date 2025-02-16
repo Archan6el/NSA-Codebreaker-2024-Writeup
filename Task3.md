@@ -68,6 +68,8 @@ It starts with `auth_service/AuthService`. `auth_service` is likely our package 
 
 Now we have all we need, let's create our proto file. I name mine `ping.proto` since we're trying to get the ping function to work specifically, and set my `go_package` to `/seedGeneration`, since we saw some references to `seedGeneration` in those `main` functions we found earlier. The name of your proto file and `go_package` doesn't matter though. 
 
+<details>
+	<Summary>Click to expand ping.proto</Summary>
 ```
 syntax = "proto3";
 
@@ -144,7 +146,7 @@ message VerifyOTPResponse {
     int64 token = 2;
 }
 ```
-
+</details>
 With our `.proto` file made, we run the `protoc` command to compile it into some Go files for us to use
 
 `protoc --go_out=. --go-grpc_out=. ping.proto`
@@ -601,4 +603,159 @@ One more run to make sure we know what's going on.
 
 Sure enough, this is the number `3009302561299014827`, which was our seed from the last run. So we can confidently say that the random number generated is the seed, so we can rename `lVar1` to `seed` in Ghidra. 
 
+The logic seems to be indexing or taking chunks of `param_8` and assigning it to `uVar6`. `param_8` is assigned to `unaff_RBX`. If we look in gdb to see what's at `rbx`, we see that it's our username
 
+![image](https://github.com/user-attachments/assets/ebdb1ca6-a3da-43d5-b23e-1e480c33bdd5)
+
+So `param_8` is the username, and we can change the name accordingly. We'll rename `uVar6` to `chunk`, since it's essentially a chunk of the username. 
+
+If we look at the what dictates the loop, the loop is dependent on `i` being less than `param_9`. Well if we're taking chunks of the username each time, `param_9` is likely the length of the username, since it would stop the loop if `i` is greater than or equal to the username's length. We can change `param_9` accordingly. 
+
+The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if it equals, and then prints the `user authenticated...` message before. We'll rename `uVar4` to target. 
+
+After our variable renaming, we now have this code. 
+
+```c
+long main.(*SeedgenAuthClient).auth
+               (long param_1,undefined8 param_2,undefined8 param_3,ulong param_4,char *param_5,
+               long param_6)
+
+{
+  long *in_RAX;
+  long seed;
+  ulong i;
+  undefined8 *puVar1;
+  ulong target;
+  long unaff_RBX;
+  long *plVar2;
+  long unaff_R14;
+  uint chunk;
+  double __x;
+  double dVar3;
+  long *param_7;
+  long username;
+  ulong username_length;
+  long lStack0000000000000020;
+  undefined8 uStack0000000000000028;
+  char *pcStack0000000000000030;
+  long lStack0000000000000038;
+  undefined local_28 [16];
+  undefined local_18 [16];
+  
+  param_7 = in_RAX;
+  username_length = param_4;
+  username = unaff_RBX;
+  uStack0000000000000028 = param_2;
+  lStack0000000000000020 = param_1;
+  pcStack0000000000000030 = param_5;
+  lStack0000000000000038 = param_6;
+  while (local_28 + 8 <= *(undefined **)(unaff_R14 + 0x10)) {
+    runtime.morestack_noctxt.abi0();
+  }
+  param_7[3] = param_7[3] + 1;
+  target = param_7[2];
+  seed = math/rand.Int63();
+  param_7[2] = seed;
+  runtime.convTstring();
+  local_28._8_8_ = &PTR_DAT_0095c9a0;
+  local_28._0_8_ = &DAT_008075e0;
+  local_18._8_8_ = runtime.convTstring();
+  local_18._0_8_ = &DAT_008075e0;
+  dVar3 = log/slog.(*Logger).log(__x);
+  if ((lStack0000000000000038 != 0) && (*pcStack0000000000000030 == '\0')) {
+    return param_7[2];
+  }
+  i = 0;
+  do {
+    if ((long)username_length <= (long)i) {
+      if ((uint)target == 0x7032f1e8) {
+        log/slog.(*Logger).log(dVar3);
+        return param_7[2];
+      }
+      plVar2 = (long *)0x0;
+      log/slog.(*Logger).log(dVar3);
+      seed = runtime.newobject();
+      *(ulong *)(seed + 0x30) = username_length;
+      if (runtime.writeBarrier != 0) {
+        seed = runtime.gcWriteBarrier1();
+        *plVar2 = username;
+      }
+      *(long *)(seed + 0x28) = username;
+      *(undefined8 *)(seed + 0x40) = uStack0000000000000028;
+      if (runtime.writeBarrier != 0) {
+        seed = runtime.gcWriteBarrier1();
+        *plVar2 = lStack0000000000000020;
+      }
+      *(long *)(seed + 0x38) = lStack0000000000000020;
+      dVar3 = (double)(**(code **)(*param_7 + 0x18))(seed,0,param_7,&regexp.arrayNoInts,0,0);
+      log/slog.(*Logger).log(dVar3);
+      puVar1 = (undefined8 *)runtime.newobject();
+      puVar1[1] = 0x16;
+      *puVar1 = &DAT_008b9c8b;
+      return -1;
+    }
+    if ((long)username_length < (long)(i + 4)) {
+      seed = username_length - i;
+      if (seed == 1) {
+        if (username_length <= i) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        chunk = (uint)*(byte *)(username + i);
+      }
+      else if (seed == 2) {
+        if (username_length <= i) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        if (username_length <= i + 1) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        chunk = (uint)*(ushort *)(username + i);
+      }
+      else if (seed == 3) {
+        if (username_length <= i) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        if (username_length <= i + 1) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        if (username_length <= i + 2) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        chunk = (uint)CONCAT12(*(undefined *)(i + 2 + username),*(undefined2 *)(username + i));
+      }
+      else {
+        chunk = 0;
+      }
+    }
+    else {
+      if (username_length <= i) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      if (username_length <= i + 1) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      if (username_length <= i + 2) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      if (username_length <= i + 3) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      chunk = *(uint *)(username + i);
+    }
+    target = (ulong)((uint)target ^ chunk);
+    i = i + 4;
+  } while( true );
+}
+```
+
+Let's look at what it's doing. 
