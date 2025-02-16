@@ -58,13 +58,13 @@ However, the most important thing for us is the `PingRequest` function, and if w
 
 We can deduce the parameters for the other functions here, and we end up with 6 that we can define. So we can start trying to make the auth server now, but how?
 
-Since the `server` executable is in Go, we'll make the auth server in Go too. Go's implementation of the `rpc` protocol is `grpc`, and [this](https://pascalallen.medium.com/how-to-build-a-grpc-server-in-go-943f337c4e05) guide was helpful in getting started. Essentially, we first need to create a `.proto` file in which we define each of our functions, as well as their request and response parameters. That should be relatively easy to do based on what we found in Ghidra. The issue however is the `package` that each `.proto` file needs. This is a little problematic because `package` needs to match on both the client and the server. 
+Since the `server` executable is in Go, we'll make the auth server in Go too. Go's implementation of the `rpc` protocol is `grpc`, and [this](https://pascalallen.medium.com/how-to-build-a-grpc-server-in-go-943f337c4e05) guide was helpful in getting started. Essentially, we first need to create a `.proto` file in which we define each of our functions, as well as their request and response parameters. That should be relatively easy to do based on what we found in Ghidra. The issue however is the `package` and `service` name that each `.proto` file needs. This is a little problematic because specifically the `service` needs to match on both the client and the server. 
 
 Thankfully, using both Ghidra *and* Binja was pretty helpful here. If we go into the `auth/auth_grpc.(*authServiceClient).Ping` function we found in Ghidra on Binja, near the end we can see this function call to `PingRequest` 
 
 ![image](https://github.com/user-attachments/assets/795cf2ce-5327-4286-8b15-12c04c527f5d)
 
-It starts with `auth_service`, which is likely our package name. 
+It starts with `auth_service/AuthService`. `auth_service` is likely our package name, and `AuthService` is our `service` name. 
 
 Now we have all we need, let's create our proto file. I name mine `ping.proto` since we're trying to get the ping function to work specifically, and set my `go_package` to `/seedGeneration`, since we saw some references to `seedGeneration` in those `main` functions we found earlier. The name of your proto file and `go_package` doesn't matter though. 
 
@@ -258,3 +258,140 @@ If we run the `server` executable again, we get a different result!
 
 ![image](https://github.com/user-attachments/assets/5dfd2069-54d2-4402-a3a5-1a240d47830b)
 ![image](https://github.com/user-attachments/assets/6cc20ad7-64a8-4122-ac65-d35ad6880360)
+
+So now the `server` executable is starting to act like an actual server, and is hosting something on port 50051. Now we essentially have to do what we just did for the auth server but backwards. Instead of finding and defining functions for a server to respond to, we need to instead find and define functions for a client so that we can call them. Thankfully however, we've already found them. They are the `main.(*seedGenerationServer)` functions we found from earlier.
+
+![image](https://github.com/user-attachments/assets/17899698-21b4-4bff-ad0d-da479dc0cbe9)
+
+We can find what parameters they expect from functions beginning with `otp/seedgen`
+
+![image](https://github.com/user-attachments/assets/cb5b4297-721a-4dff-a685-844ab86a5a78)
+
+So for example, `GetSeed` expects a username and password
+
+![image](https://github.com/user-attachments/assets/7e688fff-d8d7-4062-a2db-1b4225c27fa7)
+
+What's our `package` and `service` names this time though? `package` I'll just call `seed_generation` due to the name of the `main` functions we found. We can find the `service` name in Ghidra, under `otp/seedgen`, there are a lot of functions defined with the name, `SeedGenerationService`. That's probably our `service` name.
+
+![image](https://github.com/user-attachments/assets/1a42ff05-4152-47c7-9096-7ac4cf995b91)
+
+Now we can make our `.proto` file! I named mine `seedGeneration.proto`
+
+```
+syntax = "proto3";
+
+package seed_generation; 
+
+option go_package = "/seedGeneration";
+
+service SeedGenerationService {
+   
+    rpc GetSeed(GetSeedRequest) returns (GetSeedResponse);
+    rpc StressTest(GetStressTestRequest) returns (GetStressTestResponse);
+    rpc Ping(GetPingRequest) returns (GetPingResponse);
+
+}
+
+message GetStressTestRequest {
+    // Define fields needed for authentication
+    int64 count = 1;
+}
+
+message GetStressTestResponse {
+    // Define fields for the response
+    string response = 1;
+
+}
+
+message GetSeedRequest {
+    // Define fields needed for authentication
+    string username = 1;
+    string token = 2;
+  
+}
+
+message GetSeedResponse {
+    // Define fields for the response
+    int64 seed = 1;
+    int64 count = 2;
+}
+
+message GetPingRequest {
+    // Define fields needed for the request
+    int64 ping = 1;
+}
+
+message GetPingResponse {
+    int64 pong = 1;
+}
+```
+
+Instead of Go, it turns out you can do `grpc` stuff in Python too. To save myself the Go setup headache, I made my client in Python. For Python, compile the proto file with
+
+`python -m grpc_tools.protoc --proto_path=. --python_out=. --grpc_python_out=. seedGeneration.proto`
+
+(Make sure you have installed the needed Python libraries with `pip install grpcio grpcio-tools protobuf`)
+
+I want to call the `GetSeed` function first since it seems the most promising. However as mentioned before, it expects a username and password. What could they be?
+
+This is where the `shredded.jpg` image comes into play. I was thinking of what `JASPER` meant, until I remembered task 1. On the suspicious order, one of the emails was `jasper_04044@guard.ar`!
+
+![image](https://github.com/user-attachments/assets/d2eda0be-aa33-4b92-9a18-b40467871f02)
+
+That's probably our username! For the password, I just went with `password` as a test. 
+
+Let's make the client now in Python. I make some code to `StressTest` but I comment it out for now.
+
+```python
+import grpc
+import seedGeneration_pb2
+import seedGeneration_pb2_grpc
+
+def get_seed(stub, username, password):
+    # Create the GetSeed request (add any fields if necessary)
+    request = seedGeneration_pb2.GetSeedRequest(username=username, token=password)
+    
+    # Call the GetSeed method
+    response = stub.GetSeed(request)
+    
+    return response
+
+def stress_test(stub, count):
+    request = seedGeneration_pb2.GetStressTestRequest(count=count)
+
+    response = stub.StressTest(request)
+    return response
+    
+
+def run():
+    # Connect to the gRPC server
+    with grpc.insecure_channel('localhost:50051') as channel:
+
+        stub = seedGeneration_pb2_grpc.SeedGenerationServiceStub(channel)
+        
+        # Replace with your actual username and password
+        
+        username = "jasper_04044"
+        password = "password"
+
+        count = 1
+        
+        print("Send get_seed")
+        response = get_seed(stub, username, password)
+        print("Get seed response:")
+        print(response)
+
+        #response = stress_test(stub, count)
+        #print(response)
+
+
+if __name__ == "__main__":
+    run()
+```
+
+If we run this, we get a response!
+
+![image](https://github.com/user-attachments/assets/ff1a9513-8556-46f3-8bc6-cb07fecf68c5)
+![image](https://github.com/user-attachments/assets/a44da953-2b4a-4e7a-a56c-ae29df9cad91)
+
+Well, `{"time":"2025-02-15T20:57:05.742357055-06:00","level":"INFO","msg":"Registered OTP seed with authentication service","username":"jasper_04044","seed":8074660958352453125,"count":1}` is some JSON, and the 3 important keys are `{"username":"jasper_04044","seed":8074660958352453125,"count":1}`. Is this our answer? I submit this, but it says that what I have isn't quite right. So we have the correct keys, just not the correct values. What to do now?
