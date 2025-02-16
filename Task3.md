@@ -351,7 +351,7 @@ This is where the `shredded.jpg` image comes into play. I was thinking of what `
 
 ![image](https://github.com/user-attachments/assets/d2eda0be-aa33-4b92-9a18-b40467871f02)
 
-That's probably our username! For the password, I just went with `password` as a test. 
+`jasper_04044` is probably our username! For the password, I just went with `password` as a test. 
 
 Let's make the client now in Python. I make some code to `StressTest` but I comment it out for now.
 
