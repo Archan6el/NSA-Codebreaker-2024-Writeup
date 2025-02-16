@@ -286,6 +286,9 @@ What's our `package` and `service` names this time though? `package` I'll just c
 
 Now we can make our `.proto` file! I named mine `seedGeneration.proto`
 
+<details>
+	<Summary>Click to expand seedGeneration.proto</Summary>
+	
 ```
 syntax = "proto3";
 
@@ -334,6 +337,7 @@ message GetPingResponse {
     int64 pong = 1;
 }
 ```
+</details>
 
 Instead of Go, it turns out you can do `grpc` stuff in Python too. To save myself the Go setup headache, I made my client in Python. For Python, compile the proto file with
 
@@ -350,6 +354,9 @@ This is where the `shredded.jpg` image comes into play. I was thinking of what `
 That's probably our username! For the password, I just went with `password` as a test. 
 
 Let's make the client now in Python. I make some code to `StressTest` but I comment it out for now.
+
+<details>
+<Summary>Click to expand client.py</Summary>
 
 ```python
 import grpc
@@ -397,6 +404,7 @@ def run():
 if __name__ == "__main__":
     run()
 ```
+</details>
 
 If we run this, we get a response!
 
@@ -429,6 +437,9 @@ If we run our client and call `GetSeed`, we hit our breakpoint
 ![image](https://github.com/user-attachments/assets/e7cd7a8d-c36a-4b21-b1a6-a9ca418b018f)
 
 So username and password is passed into `auth`. Additionally, some kind of value, `c` is passed in as well to both `GetSeed` and `auth`. With the info we know right now, let's see if we can rename some variables in the `auth` function to make it easier to read
+
+<details>
+<Summary>Click to expand main.(*SeedgenAuthClient).auth</Summary>
 
 ```c
 long main.(*SeedgenAuthClient).auth
@@ -573,6 +584,8 @@ long main.(*SeedgenAuthClient).auth
   } while( true );
 }
 ```
+</details>
+
 Right off the bat, we can see that `uVar2` seems to be some kind of counter, since it starts at 0 and gets incremented by 4 each iteration. Let's rename it to `i`. 
 
 Something interesting is `param_7`, which is set equal to `in_RAX`. This perhaps could be what `c` was pointing to? We see that `param_7[2]` is assigned to `lVar1`, which itself is assigned to a random number, `math/rand.Int63();`. Well in gdb we can see what that number is by using pointer arithmetic to essentially index `param_7[2]`. 
@@ -621,6 +634,9 @@ If we look at the what dictates the loop, the loop is dependent on `i` being les
 The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if it equals, and then prints the `user authenticated...` message before. We'll rename `uVar4` to target. 
 
 After our variable renaming, we now have this code. 
+
+<details>
+<Summary>Click to expand main.(*SeedgenAuthClient).auth</Summary>
 
 ```c
 long main.(*SeedgenAuthClient).auth
@@ -764,5 +780,6 @@ long main.(*SeedgenAuthClient).auth
   } while( true );
 }
 ```
+</details>
 
 Let's look at what it's doing. 
