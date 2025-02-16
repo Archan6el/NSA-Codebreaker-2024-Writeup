@@ -70,6 +70,7 @@ Now we have all we need, let's create our proto file. I name mine `ping.proto` s
 
 <details>
 	<Summary>Click to expand ping.proto</Summary>
+	
 ```
 syntax = "proto3";
 
