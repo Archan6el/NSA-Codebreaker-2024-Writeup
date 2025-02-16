@@ -877,8 +877,6 @@ func main() {
 
 	// Start a counter to track attempts
 	var attempts int64 = -1
-	//rand.Int63() // 63-bit random value
-
 
 	for {
 		attempts++
@@ -993,8 +991,6 @@ func main() {
 
 	// Start a counter to track attempts
 	var attempts int64 = -1
-	//rand.Int63() // 63-bit random value
-
 
 	for {
 		attempts++
