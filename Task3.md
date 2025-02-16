@@ -69,7 +69,7 @@ It starts with `auth_service/AuthService`. `auth_service` is likely our package 
 Now we have all we need, let's create our proto file. I name mine `ping.proto` since we're trying to get the ping function to work specifically, and set my `go_package` to `/seedGeneration`, since we saw some references to `seedGeneration` in those `main` functions we found earlier. The name of your proto file and `go_package` doesn't matter though. 
 
 <details>
-	<Summary> *Click to expand ping.proto* </Summary>
+	<Summary> <b>Click to expand ping.proto</b> </Summary>
 	
 ```
 syntax = "proto3";
