@@ -17,7 +17,7 @@
 >Retrieved from the facility, could be important? (shredded.jpg)
 >Prompt:
 >
->Enter a valid JSON that contains the (3 interesting) keys and specific values that would have been logged if you had successfully leveraged the running software. Do >ALL your work in lower case.
+>Enter a valid JSON that contains the (3 interesting) keys and specific values that would have been logged if you had successfully leveraged the running software. Do ALL your work in lower case.
 
 ### Solve:
 Here we go, Task 3. We're finally getting to some actual rev. 
