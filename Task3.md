@@ -287,7 +287,7 @@ What's our `package` and `service` names this time though? `package` I'll just c
 Now we can make our `.proto` file! I named mine `seedGeneration.proto`
 
 <details>
-	<Summary><br>Click to expand seedGeneration.proto</br></Summary>
+	<Summary><b>Click to expand seedGeneration.proto</b></Summary>
 	
 ```
 syntax = "proto3";
@@ -356,7 +356,7 @@ This is where the `shredded.jpg` image comes into play. I was thinking of what `
 Let's make the client now in Python. I make some code to `StressTest` but I comment it out for now.
 
 <details>
-<Summary><br>Click to expand client.py</b></Summary>
+<Summary><b>Click to expand client.py</b></Summary>
 
 ```python
 import grpc
@@ -439,7 +439,7 @@ If we run our client and call `GetSeed`, we hit our breakpoint
 So username and password is passed into `auth`. Additionally, some kind of value, `c` is passed in as well to both `GetSeed` and `auth`. With the info we know right now, let's see if we can rename some variables in the `auth` function to make it easier to read
 
 <details>
-<Summary><br>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
+<Summary><b>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
 
 ```c
 long main.(*SeedgenAuthClient).auth
@@ -636,7 +636,7 @@ The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is c
 After our variable renaming, we now have this code. 
 
 <details>
-<Summary><br>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
+<Summary><b>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
 
 ```c
 long main.(*SeedgenAuthClient).auth
@@ -807,7 +807,7 @@ It's `0x378f96687bfa0`
 We have everything we need, let's start making our solve. We will continuously generate numbers using the seeded random number generator, take it and the username `jasper_04044`, go through the Xor logic, and check to see if it equals `0x7032f1e8`. We'll code the solve in Go since the `server` executable uses specifically Go's random number generator. 
 
 <details>
-	<Summary><br>Click to expand solve.go</b></Summary>
+	<Summary><b>Click to expand solve.go</b></Summary>
 
  ```Go
 package main
@@ -921,7 +921,7 @@ Remember when we were using gdb to find out what was stored in `param_7[2]`, and
 I tweak the code to print the next seed after we pass the Xor logic
 
 <details>
-<Summary><br>Click to expand solve.go</b></Summary>
+<Summary><b>Click to expand solve.go</b></Summary>
 
  ```Go
 package main
