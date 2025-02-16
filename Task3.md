@@ -145,8 +145,9 @@ message VerifyOTPResponse {
     bool success = 1;
     int64 token = 2;
 }
-```
 </details>
+```
+
 With our `.proto` file made, we run the `protoc` command to compile it into some Go files for us to use
 
 `protoc --go_out=. --go-grpc_out=. ping.proto`
