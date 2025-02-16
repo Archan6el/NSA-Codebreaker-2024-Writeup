@@ -393,5 +393,212 @@ If we run this, we get a response!
 
 ![image](https://github.com/user-attachments/assets/ff1a9513-8556-46f3-8bc6-cb07fecf68c5)
 ![image](https://github.com/user-attachments/assets/a44da953-2b4a-4e7a-a56c-ae29df9cad91)
+>Note the dates being after the competition is due to me recreating the results when making this writeup
 
 Well, `{"time":"2025-02-15T20:57:05.742357055-06:00","level":"INFO","msg":"Registered OTP seed with authentication service","username":"jasper_04044","seed":8074660958352453125,"count":1}` is some JSON, and the 3 important keys are `{"username":"jasper_04044","seed":8074660958352453125,"count":1}`. Is this our answer? I submit this, but it says that what I have isn't quite right. So we have the correct keys, just not the correct values. What to do now?
+
+After some thinking, I remembered that the prompt was asking for the output that would be given if the attackers had "successfully leveraged" the running software. That means that they had to exploit something. Looking back at the `GetSeed` function in Ghidra, we find something interesting. 
+
+![image](https://github.com/user-attachments/assets/fdd1ab60-129f-41bd-960c-e8eaae5ea6f7)
+
+A call to some sort of `auth` function. If we take a look, there's a lot of logic, but one if statement stands out. 
+
+![image](https://github.com/user-attachments/assets/1ce8996f-0ff5-42a3-b933-6b596640e735)
+
+It's even more evident in Binja with a `test user authenticated...` message
+
+![image](https://github.com/user-attachments/assets/21ef9c32-aa50-493c-a943-260c135b0f6c)
+
+Well, how do we trigger this message? First we need to see what's being passed into this function
+
+Let's run `server` using gdb and set a breakpoint at `main.(*SeedgenAuthClient).auth`
+
+![image](https://github.com/user-attachments/assets/6dbcf66e-feca-474d-95de-7c908c88f33f)
+
+If we run our client and call `GetSeed`, we hit our breakpoint 
+
+![image](https://github.com/user-attachments/assets/e7cd7a8d-c36a-4b21-b1a6-a9ca418b018f)
+
+So username and password is passed into `auth`. Additionally, some kind of value, `c` is passed in as well to both `GetSeed` and `auth`. With the info we know right now, let's see if we can rename some variables in the `auth` function to make it easier to read
+
+```c
+long main.(*SeedgenAuthClient).auth
+               (long param_1,undefined8 param_2,undefined8 param_3,ulong param_4,char *param_5,
+               long param_6)
+
+{
+  long *in_RAX;
+  long lVar1;
+  ulong uVar2;
+  undefined8 *puVar3;
+  ulong uVar4;
+  long unaff_RBX;
+  long *plVar5;
+  long unaff_R14;
+  uint uVar6;
+  double __x;
+  double dVar7;
+  long *param_7;
+  long param_8;
+  ulong param_9;
+  long param_10;
+  undefined8 param_11;
+  char *param_12;
+  long param_13;
+  undefined local_28 [16];
+  undefined local_18 [16];
+  
+  param_7 = in_RAX;
+  param_9 = param_4;
+  param_8 = unaff_RBX;
+  param_11 = param_2;
+  param_10 = param_1;
+  param_12 = param_5;
+  param_13 = param_6;
+  while (local_28 + 8 <= *(undefined **)(unaff_R14 + 0x10)) {
+    runtime.morestack_noctxt.abi0();
+  }
+  param_7[3] = param_7[3] + 1;
+  uVar4 = param_7[2];
+  lVar1 = math/rand.Int63();
+  param_7[2] = lVar1;
+  runtime.convTstring();
+  local_28._8_8_ = &PTR_DAT_0095c9a0;
+  local_28._0_8_ = &DAT_008075e0;
+  local_18._8_8_ = runtime.convTstring();
+  local_18._0_8_ = &DAT_008075e0;
+  dVar7 = log/slog.(*Logger).log(__x);
+  if ((param_13 != 0) && (*param_12 == '\0')) {
+    return param_7[2];
+  }
+  uVar2 = 0;
+  do {
+    if ((long)param_9 <= (long)uVar2) {
+      if ((uint)uVar4 == 0x7032f1e8) {
+        log/slog.(*Logger).log(dVar7);
+        return param_7[2];
+      }
+      plVar5 = (long *)0x0;
+      log/slog.(*Logger).log(dVar7);
+      lVar1 = runtime.newobject();
+      *(ulong *)(lVar1 + 0x30) = param_9;
+      if (runtime.writeBarrier != 0) {
+        lVar1 = runtime.gcWriteBarrier1();
+        *plVar5 = param_8;
+      }
+      *(long *)(lVar1 + 0x28) = param_8;
+      *(undefined8 *)(lVar1 + 0x40) = param_11;
+      if (runtime.writeBarrier != 0) {
+        lVar1 = runtime.gcWriteBarrier1();
+        *plVar5 = param_10;
+      }
+      *(long *)(lVar1 + 0x38) = param_10;
+      dVar7 = (double)(**(code **)(*param_7 + 0x18))(lVar1,0,param_7,&regexp.arrayNoInts,0,0);
+      log/slog.(*Logger).log(dVar7);
+      puVar3 = (undefined8 *)runtime.newobject();
+      puVar3[1] = 0x16;
+      *puVar3 = &DAT_008b9c8b;
+      return -1;
+    }
+    if ((long)param_9 < (long)(uVar2 + 4)) {
+      lVar1 = param_9 - uVar2;
+      if (lVar1 == 1) {
+        if (param_9 <= uVar2) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        uVar6 = (uint)*(byte *)(param_8 + uVar2);
+      }
+      else if (lVar1 == 2) {
+        if (param_9 <= uVar2) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        if (param_9 <= uVar2 + 1) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        uVar6 = (uint)*(ushort *)(param_8 + uVar2);
+      }
+      else if (lVar1 == 3) {
+        if (param_9 <= uVar2) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        if (param_9 <= uVar2 + 1) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        if (param_9 <= uVar2 + 2) {
+                    /* WARNING: Subroutine does not return */
+          runtime.panicIndex();
+        }
+        uVar6 = (uint)CONCAT12(*(undefined *)(uVar2 + 2 + param_8),*(undefined2 *)(param_8 + uVar2))
+        ;
+      }
+      else {
+        uVar6 = 0;
+      }
+    }
+    else {
+      if (param_9 <= uVar2) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      if (param_9 <= uVar2 + 1) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      if (param_9 <= uVar2 + 2) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      if (param_9 <= uVar2 + 3) {
+                    /* WARNING: Subroutine does not return */
+        runtime.panicIndex();
+      }
+      uVar6 = *(uint *)(param_8 + uVar2);
+    }
+    uVar4 = (ulong)((uint)uVar4 ^ uVar6);
+    uVar2 = uVar2 + 4;
+  } while( true );
+}
+```
+Right off the bat, we can see that `uVar2` seems to be some kind of counter, since it starts at 0 and gets incremented by 4 each iteration. Let's rename it to `i`. 
+
+Something interesting is `param_7`, which is set equal to `in_RAX`. This perhaps could be what `c` was pointing to? We see that `param_7[2]` is assigned to `lVar1`, which itself is assigned to a random number, `math/rand.Int63();`. Well in gdb we can see what that number is by using pointer arithmetic to essentially index `param_7[2]`. 
+
+We hit the breakpoint again in gdb and this time get
+
+![image](https://github.com/user-attachments/assets/e9f269a7-af86-41da-b791-a324591bf1fa)
+
+Since `c` is probably `param_7`, let's use pointer arithmetic to get the value at `param_7[2]`. If we add 2*8 to this address, we should get the element at the index 2, since each element takes up 8 bytes. We get
+ a value:
+
+ ![image](https://github.com/user-attachments/assets/807b4eb7-42f3-4a0d-ba75-88fe285f6fa0)
+
+ This is the number `6205117966191793308`
+
+We get the response
+
+![image](https://github.com/user-attachments/assets/c65b1582-92e2-4146-a5e6-646e09ec4a7e)
+
+That didn't really tell us much, let's do another run. 
+
+This time we get
+
+![image](https://github.com/user-attachments/assets/17b381a2-7c74-4b3f-b8eb-97f6586ba64a)
+
+This is the number `8074660958352453125`. Hey wait a second. That was our seed value from the last run!
+
+This time we get this output:
+
+![image](https://github.com/user-attachments/assets/416900b3-c1d2-4a11-9f08-8a8f37434d61)
+
+One more run to make sure we know what's going on.
+
+![image](https://github.com/user-attachments/assets/1b19f0c0-18ec-47e3-8a95-c5be2fcf9e58)
+
+Sure enough, this is the number `3009302561299014827`, which was our seed from the last run. So we can confidently say that the random number generated is the seed, so we can rename `lVar1` to `seed` in Ghidra. 
+
+
