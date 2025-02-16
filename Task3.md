@@ -144,3 +144,117 @@ message VerifyOTPResponse {
     int64 token = 2;
 }
 ```
+
+With our `.proto` file made, we run the `protoc` command to compile it into some Go files for us to use
+
+`protoc --go_out=. --go-grpc_out=. ping.proto`
+
+Now let's create the auth server. In my code, I set up some sample checks for `AuthenticateRequest` and `VerifyOTP` just to see if they do anything. Most importantly, we run the server on port 50052. 
+
+```Go
+package main
+
+import (
+	"context"
+	"fmt"
+	"net"
+	"google.golang.org/grpc"
+	"server/seedGeneration" // Replace with the actual import path for your generated pb
+)
+
+type server struct {
+	seedGeneration.UnimplementedAuthServiceServer
+}
+
+// Authenticate handles the Authenticate RPC method
+func (s *server) Authenticate(ctx context.Context, req *seedGeneration.AuthenticateRequest) (*seedGeneration.AuthenticateResponse, error) {
+	//fmt.Println("Authenticate request received:", req)
+	// Simple logic for demonstration (you can replace it with real authentication logic)
+	if req.Username == "testuser" && req.Password == "testpass" {
+		return &seedGeneration.AuthenticateResponse{
+			Success: true,
+			Message: "Authentication successful",
+		}, nil
+	}
+	return &seedGeneration.AuthenticateResponse{
+		Success: true,
+		Message: "Authentication failed",
+	}, nil
+}
+
+// Logout handles the Logout RPC method
+func (s *server) Logout(ctx context.Context, req *seedGeneration.LogoutRequest) (*seedGeneration.LogoutResponse, error) {
+	fmt.Println("Logout request received:", req)
+	// For now, just return a successful response
+	return &seedGeneration.LogoutResponse{}, nil
+}
+
+// Ping handles the Ping RPC method
+func (s *server) Ping(ctx context.Context, req *seedGeneration.PingRequest) (*seedGeneration.PingResponse, error) {
+	fmt.Println("Ping request received:", req)
+	// Simple logic for Pong response
+	return &seedGeneration.PingResponse{Pong: req.Ping}, nil
+}
+
+// RefreshToken handles the RefreshToken RPC method
+func (s *server) RefreshToken(ctx context.Context, req *seedGeneration.RefreshTokenRequest) (*seedGeneration.RefreshTokenResponse, error) {
+	fmt.Println("RefreshToken request received:", req)
+	// For now, just return a simple response
+	return &seedGeneration.RefreshTokenResponse{}, nil
+}
+
+// RegisterOTPSeed handles the RegisterOTPSeed RPC method
+func (s *server) RegisterOTPSeed(ctx context.Context, req *seedGeneration.RegisterOTPSeedRequest) (*seedGeneration.RegisterOTPSeedResponse, error) {
+	//fmt.Println("RegisterOTPSeed request received:", req)
+	// For now, just return a success response
+	return &seedGeneration.RegisterOTPSeedResponse{
+		Success: true,
+	}, nil
+}
+
+// VerifyOTP handles the VerifyOTP RPC method
+func (s *server) VerifyOTP(ctx context.Context, req *seedGeneration.VerifyOTPRequest) (*seedGeneration.VerifyOTPResponse, error) {
+	fmt.Println("VerifyOTP request received:", req)
+	// For now, just verify OTP logic (simple check)
+	if req.Otp == 123456 {
+		return &seedGeneration.VerifyOTPResponse{
+			Success: true,
+			Token:   654321, // Sample token
+		}, nil
+	}
+	return &seedGeneration.VerifyOTPResponse{
+		Success: false,
+		Token:   0,
+	}, nil
+}
+
+func main() {
+	// Listen on port 50052
+	lis, err := net.Listen("tcp", ":50052")
+	if err != nil {
+		fmt.Println("Failed to listen on port 50052:", err)
+		return
+	}
+
+	// Create a gRPC server
+	grpcServer := grpc.NewServer()
+
+	// Register the AuthService server
+	seedGeneration.RegisterAuthServiceServer(grpcServer, &server{})
+
+	// Start the server
+	fmt.Println("gRPC server started on port 50052")
+	if err := grpcServer.Serve(lis); err != nil {
+		fmt.Println("Failed to start server:", err)
+	}
+}
+```
+
+Let's run it with `go run auth_server.go`
+
+![image](https://github.com/user-attachments/assets/ffccbf0f-df62-4354-b4cd-d150667b4034)
+
+If we run the `server` executable again, we get a different result!
+
+![image](https://github.com/user-attachments/assets/5dfd2069-54d2-4402-a3a5-1a240d47830b)
+![image](https://github.com/user-attachments/assets/6cc20ad7-64a8-4122-ac65-d35ad6880360)
