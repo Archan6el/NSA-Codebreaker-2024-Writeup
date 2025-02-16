@@ -144,9 +144,8 @@ message VerifyOTPResponse {
     // Define fields for the response
     bool success = 1;
     int64 token = 2;
-}
+}```
 </details>
-```
 
 With our `.proto` file made, we run the `protoc` command to compile it into some Go files for us to use
 
