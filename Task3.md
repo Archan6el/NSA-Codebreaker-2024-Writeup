@@ -52,7 +52,7 @@ We see some sub-functions that shed light on what parameters each function is ex
 
 ![image](https://github.com/user-attachments/assets/b5d4da74-1977-4e9b-aff9-8bab1b202d9b)
 
-However, the most important thing for us is the `PingRequest` function, and if we take a look, it has a `GetPing` subfunction, which means it probably expects that as a parameter. 
+However, the most important thing for us is the `PingRequest` function, and if we take a look, it has a `GetPing` sub-function, which means it probably expects that as a parameter. 
 
 ![image](https://github.com/user-attachments/assets/0bf781f9-44fe-4fef-919c-72c4987232c6)
 
