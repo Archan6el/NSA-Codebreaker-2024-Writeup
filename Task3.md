@@ -588,13 +588,18 @@ long main.(*SeedgenAuthClient).auth
 
 Right off the bat, we can see that `uVar2` seems to be some kind of counter, since it starts at 0 and gets incremented by 4 each iteration. Let's rename it to `i`. 
 
-Something interesting is `param_7`, which is set equal to `in_RAX`. This perhaps could be what `c` was pointing to? We see that `param_7[2]` is assigned to `lVar1`, which itself is assigned to a random number, `math/rand.Int63();`. Well in gdb we can see what that number is by using pointer arithmetic to essentially index `param_7[2]`. 
+Something interesting is `param_7`, which is set equal to `in_RAX`. This is what `c` was pointing to.
+
+![image](https://github.com/user-attachments/assets/3c2738f7-09ec-4141-a5a2-f3df4e2e804f)
+![image](https://github.com/user-attachments/assets/695c4c64-2a4d-4a41-bea6-f412acde7e4e)
+
+We see that `param_7[2]` is assigned to `lVar1`, which itself is assigned to a random number, `math/rand.Int63();`. Well in gdb we can see what that number is by using pointer arithmetic to essentially index `param_7[2]` through the memory address that `c` is pointing to. 
 
 We hit the breakpoint again in gdb and this time get
 
 ![image](https://github.com/user-attachments/assets/e9f269a7-af86-41da-b791-a324591bf1fa)
 
-Since `c` is probably `param_7`, let's use pointer arithmetic to get the value at `param_7[2]`. If we add `2*8` to this address, we should get the element at the index 2, since each element takes up 8 bytes. We get
+Since `c` is pointing to `param_7`, let's use pointer arithmetic to get the value at `param_7[2]`. If we add `2*8` to this address, we should get the element at the index 2, since each element takes up 8 bytes. We get
  a value:
 
  ![image](https://github.com/user-attachments/assets/807b4eb7-42f3-4a0d-ba75-88fe285f6fa0)
