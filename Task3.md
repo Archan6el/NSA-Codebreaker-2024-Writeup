@@ -782,7 +782,37 @@ long main.(*SeedgenAuthClient).auth
 ```
 </details>
 
-Let's look at what it's doing. It gets a little confusing since the function initially has the `seed` variable as the randomly generated seed, assigns it to `param_7[2]`, and then reuses it later as `seed = username_length - i;`. Regardless, we can get a good grasp of what's going on. `target` starts as the randomly generated `seed` value. `auth` then takes the username, and loops through it 4 bytes (characters) at a time. In each iteration, it Xor's `target` with the 4 byte chunk. After it finishes looping through the username and doing all the Xor logic, it checks to see if the final result equals `0x7032f1e8`. So our goal is to find the username (which we already know), seed, and count that once going through the Xor logic, will equal `0x7032f1e8`.
+Let's look at what it's doing. It gets a little confusing since the function initially has the `seed` variable as the randomly generated seed, assigns it to `param_7[2]`, and then reuses it later as `seed = username_length - i;`. Regardless, we can get a good grasp of what's going on. 
+
+`target` starts as the randomly generated `seed` value. 
+
+`target = param_7[2];`
+
+`auth` then takes the username, and loops through it 4 bytes (characters) at a time. 
+
+```c
+ i = 0;
+  do {
+    if ((long)username_length <= (long)i) {
+    ... Logic ...
+    }
+    i = i + 4;
+  } while( true );
+```
+
+In each iteration, it Xor's `target` with the 4 byte chunk. 
+
+`target = (ulong)((uint)target ^ chunk);`
+
+After it finishes looping through the username and doing all the Xor logic, it checks to see if the final result equals `0x7032f1e8`. 
+
+```c
+if ((uint)target == 0x7032f1e8) {
+	log/slog.(*Logger).log(dVar3);
+	return param_7[2];
+}
+```
+So our goal is to find the username (which we already know), seed, and count that once going through the Xor logic, will equal `0x7032f1e8`.
 
 Technically, we could just call `GetSeed` a bunch of times, but that would take forever. The simplest way would be to recreate all this logic and run it locally. There's just one issue, which is the randomly generated number. I thought it would change each time, which would make it impossible to do locally, but after resetting the `server` executable, we can see that the seed values at the corresponding counts are the same each time
 
