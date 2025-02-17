@@ -436,7 +436,7 @@ If we run our client and call `GetSeed`, we hit our breakpoint
 
 ![image](https://github.com/user-attachments/assets/e7cd7a8d-c36a-4b21-b1a6-a9ca418b018f)
 
-So username and password is passed into `auth`. Additionally, some kind of value, `c` is passed in as well to both `GetSeed` and `auth`. With the info we know right now, let's see if we can rename some variables in the `auth` function to make it easier to read
+So username and password is passed into `auth`. Additionally, some kind of value, `c` is passed in as well to both `GetSeed` and `auth`. With the info we know right now, let's see if we can rename some variables in the `auth` function on Ghidra to make it easier to read
 
 <details>
 <Summary><b>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
