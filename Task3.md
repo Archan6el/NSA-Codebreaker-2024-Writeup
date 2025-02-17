@@ -636,7 +636,7 @@ So `param_8` is the username, and we can change the name accordingly. We'll rena
 
 If we look at the what dictates the loop, the loop is dependent on `i` being less than `param_9`. Well if we're taking chunks of the username each time, `param_9` is likely the length of the username, since it would stop the loop if `i` is greater than or equal to the username's length. We can change `param_9` accordingly. 
 
-The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if it equals, and then prints the `user authenticated...` message before. We'll rename `uVar4` to `target`. 
+The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if they are equal, and then prints the `user authenticated...` message we saw before in Binja. We'll rename `uVar4` to `target`. 
 
 After our variable renaming, we now have this code. 
 
