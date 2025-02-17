@@ -631,7 +631,7 @@ So `param_8` is the username, and we can change the name accordingly. We'll rena
 
 If we look at the what dictates the loop, the loop is dependent on `i` being less than `param_9`. Well if we're taking chunks of the username each time, `param_9` is likely the length of the username, since it would stop the loop if `i` is greater than or equal to the username's length. We can change `param_9` accordingly. 
 
-The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if it equals, and then prints the `user authenticated...` message before. We'll rename `uVar4` to target. 
+The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if it equals, and then prints the `user authenticated...` message before. We'll rename `uVar4` to `target`. 
 
 After our variable renaming, we now have this code. 
 
@@ -782,7 +782,7 @@ long main.(*SeedgenAuthClient).auth
 ```
 </details>
 
-Let's look at what it's doing. `target` starts as the randomly generated `seed` value. `auth` then takes the username, and loops through it 4 bytes (characters) at a time. In each iteration, it Xor's `target` with the 4 byte chunk. After it finishes looping through the username and doing all the Xor logic, it checks to see if the final result equals `0x7032f1e8`. So our goal is to find the username (which we already know), seed, and count that once going through the Xor logic, will equal `0x7032f1e8`.
+Let's look at what it's doing. It gets a little confusing since the function initially has the `seed` variable as the randomly generated seed, assigns it to `param_7[2]`, and then reuses it later as `seed = username_length - i;`. Regardless, we can get a good grasp of what's going on. `target` starts as the randomly generated `seed` value. `auth` then takes the username, and loops through it 4 bytes (characters) at a time. In each iteration, it Xor's `target` with the 4 byte chunk. After it finishes looping through the username and doing all the Xor logic, it checks to see if the final result equals `0x7032f1e8`. So our goal is to find the username (which we already know), seed, and count that once going through the Xor logic, will equal `0x7032f1e8`.
 
 Technically, we could just call `GetSeed` a bunch of times, but that would take forever. The simplest way would be to recreate all this logic and run it locally. There's just one issue, which is the randomly generated number. I thought it would change each time, which would make it impossible to do locally, but after resetting the `server` executable, we can see that the seed values at the corresponding counts are the same each time
 
