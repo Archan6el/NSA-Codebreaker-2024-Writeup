@@ -588,14 +588,14 @@ long main.(*SeedgenAuthClient).auth
 
 Right off the bat, we can see that `uVar2` seems to be some kind of counter, since it starts at 0 and gets incremented by 4 each iteration. Let's rename it to `i`. 
 
-Something interesting is `param_7`, which is set equal to `in_RAX`. If we run the `client` again and hit the breakpoint in gdb, looking at what's stored in `rax`, we can see that this is what `c` is pointing to.
+Something interesting is `param_7`, which is set equal to `in_RAX`. If we run `client.py` and `server` again and hit the breakpoint in gdb, looking at what's stored in `rax`, we can see that this is what `c` is pointing to.
 
 ![image](https://github.com/user-attachments/assets/3c2738f7-09ec-4141-a5a2-f3df4e2e804f)
 ![image](https://github.com/user-attachments/assets/695c4c64-2a4d-4a41-bea6-f412acde7e4e)
 
 We also see that `param_7[2]` is assigned to `lVar1`, which itself is assigned to a random number, `math/rand.Int63();`. Well in gdb we can see what that number is by using pointer arithmetic to essentially index `param_7[2]` through the memory address that `c` is pointing to. 
 
-We hit the breakpoint again in gdb and this time get
+Re-running `client.py` and `server`, we hit the breakpoint again in gdb and this time get
 
 ![image](https://github.com/user-attachments/assets/e9f269a7-af86-41da-b791-a324591bf1fa)
 
