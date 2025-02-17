@@ -353,7 +353,7 @@ This is where the `shredded.jpg` image comes into play. I was thinking of what `
 
 `jasper_04044` is probably our username! For the password, I just went with `password` as a test. 
 
-Let's make the client now in Python. I make some code to `StressTest` but I comment it out for now.
+Let's make the client now in Python. I make some code to call `StressTest` too but I comment it out for now. I mainly want to see what `GetSeed` does. 
 
 <details>
 <Summary><b>Click to expand client.py</b></Summary>
