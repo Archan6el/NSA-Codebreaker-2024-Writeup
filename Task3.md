@@ -347,7 +347,7 @@ Instead of Go, it turns out you can do `grpc` stuff in Python too. To save mysel
 
 I want to call the `GetSeed` function first since it seems the most promising. However as mentioned before, it expects a username and password. What could they be?
 
-This is where the `shredded.jpg` image comes into play. I was thinking of what `JASPER` meant, until I remembered task 1. On the suspicious order, one of the emails was `jasper_04044@guard.ar`!
+This is where the `shredded.jpg` image comes into play. I was thinking of what `JASPER` meant, or where I've seen it before, and then I remembered Task 1. On the suspicious order, one of the emails was `jasper_04044@guard.ar`!
 
 ![image](https://github.com/user-attachments/assets/d2eda0be-aa33-4b92-9a18-b40467871f02)
 
