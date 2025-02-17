@@ -426,7 +426,7 @@ It's even more evident in Binja with a `test user authenticated...` message
 
 ![image](https://github.com/user-attachments/assets/21ef9c32-aa50-493c-a943-260c135b0f6c)
 
-Well, how do we trigger this message? First we need to see what's being passed into this function
+It seems that we have to somehow exploit the `server` executable, or its logic, in order to call this function. Well, how do we even go about doing that? First we need to see what's being passed into this function
 
 Let's run `server` using gdb and set a breakpoint at `main.(*SeedgenAuthClient).auth`
 
