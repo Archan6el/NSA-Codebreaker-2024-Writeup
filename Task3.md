@@ -594,7 +594,7 @@ We hit the breakpoint again in gdb and this time get
 
 ![image](https://github.com/user-attachments/assets/e9f269a7-af86-41da-b791-a324591bf1fa)
 
-Since `c` is probably `param_7`, let's use pointer arithmetic to get the value at `param_7[2]`. If we add 2*8 to this address, we should get the element at the index 2, since each element takes up 8 bytes. We get
+Since `c` is probably `param_7`, let's use pointer arithmetic to get the value at `param_7[2]`. If we add `2*8` to this address, we should get the element at the index 2, since each element takes up 8 bytes. We get
  a value:
 
  ![image](https://github.com/user-attachments/assets/807b4eb7-42f3-4a0d-ba75-88fe285f6fa0)
@@ -818,9 +818,9 @@ Technically, we could just call `GetSeed` a bunch of times, but that would take 
 
 ![image](https://github.com/user-attachments/assets/7c21daea-de18-4a52-98bc-62015718c8fe)
 
-Or in other words, count 1 is always the seed 8074660958352453125, count 2 is always the seed 3009302561299014827, etc, etc every time. This means that the rando number generator is seeded, we just have to find what the seed is. 
+Or in other words, count 1 is always the seed `8074660958352453125`, count 2 is always the seed `3009302561299014827`, etc, etc every time. This is why having the count is one of the important keys in the JSON we have to submit, since it is tied to the correct seed. The fact that the same seeds are generated each time means that the random number generator is seeded, we just have to find what the seed is. 
 
-In Ghidra, we can find the function, `math/rand.(*Rand).Seed`
+In Ghidra, we can find the function, `math/rand.(*Rand).Seed`, which is the Go function used to seed its random number generator. 
 
 ![image](https://github.com/user-attachments/assets/c0aba82b-ab3a-4409-adf3-d604de833792)
 
