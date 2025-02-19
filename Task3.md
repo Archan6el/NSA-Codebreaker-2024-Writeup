@@ -817,7 +817,7 @@ if ((uint)target == 0x7032f1e8) {
 	return param_7[2];
 }
 ```
-So our goal is to find the username (which we already know), seed, and count that once going through the Xor logic, will equal `0x7032f1e8`.
+So our goal is to find the username, seed, and count that once going through the Xor logic, will equal `0x7032f1e8`. Based on the `shredded.jpg` image, it seems that we already have the correct username, which is `jasper_04044`. We just need to find the seed and count. 
 
 Technically, we could just call `GetSeed` a bunch of times, but that would take forever. The simplest way would be to recreate all this logic and run it locally. There's just one issue, which is the randomly generated number. I thought it would change each time, which would make it impossible to do locally, but after resetting the `server` executable, we can see that the seed values at the corresponding counts are the same each time
 
