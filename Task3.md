@@ -1047,7 +1047,7 @@ func main() {
 			fmt.Printf("Match found! Final uVar4: %08x\n", finalUVar4)
 			fmt.Printf("Seed: %d\n", currentSeed)   // Print the seed
 			fmt.Printf("Count: %d\n", attempts)  // Print the count (attempts)
- 	    fmt.Printf("Next seed: %d\n", rand.Int63())
+ 	        fmt.Printf("Next seed: %d\n", rand.Int63())
 			break
 		}
 
