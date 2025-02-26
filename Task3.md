@@ -57,7 +57,7 @@ However, the most important thing for us is the `PingRequest` function, and if w
 
 ![image](https://github.com/user-attachments/assets/0bf781f9-44fe-4fef-919c-72c4987232c6)
 
-We can deduce the parameters for the other functions here, and we end up with 6 that we can define. So we can start trying to make the auth server now, but how?
+We can deduce the parameters for the other functions here in the same way, and we end up with 6 that we can pretty confidently define. So we can start trying to make the auth server now, but how?
 
 Since the `server` executable is in Go, we'll make the auth server in Go too. Go's implementation of the `rpc` protocol is `grpc`, and [this](https://pascalallen.medium.com/how-to-build-a-grpc-server-in-go-943f337c4e05) guide was helpful in getting started. Essentially, we first need to create a `.proto` file in which we define each of our functions, as well as their request and response parameters. That should be relatively easy to do based on what we found in Ghidra. The issue however is the `package` and `service` name that each `.proto` file needs. This is a little problematic because specifically the `service` needs to match on both the client and the server. 
 
