@@ -44,7 +44,7 @@ After Ghidra does its analysis, we find that `server` is a Go binary. Trying to 
 
 However, there isn't really anything interesting there to build off of within them, but we'll keep our eye on these `main` functions. 
 
-After some more snooping around, I stumble upon a jackpot of interesting functions each beginning with `auth`. Since the `server` executable is trying to ping what it calls an *auth* server, we're probably in the right place. Among these functions we find what looks to be a `Ping` function, or more specifically, a `PingRequest` function. 
+After some more snooping around, I stumble upon a jackpot of interesting functions each beginning with `auth`. Since the `server` executable is trying to ping what it calls an *auth* server, we're probably in the right place. Among these functions we find what looks to be a `Ping` function, or more specifically, `PingRequest` and `PingResponse` functions. 
 
 ![image](https://github.com/user-attachments/assets/91b35027-1d2e-4318-9f49-9fa36ced77d4)
 ![image](https://github.com/user-attachments/assets/34702a39-7b8e-4da5-808e-6b1e152fb103)
