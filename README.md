@@ -16,3 +16,4 @@ This is my writeup of the 2024 NSA Codebreaker Challenges
 - [Task 2 - Driving Me Crazy - (Forensics, DevOps)](Task2.md)
 - [Task 3 - How did they get in? - (Reverse Engineering, Vulnerability Research)](Task3.md)
 - [Task 4 - LLMs never lie - (Programming, Forensics)](Task4.md)
+- [Task 5 - The #153 - (Reverse Engineering, Cryptography)](Task5.md)
