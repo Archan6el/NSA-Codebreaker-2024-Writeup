@@ -23,6 +23,9 @@
 >Client certificate issued by the GA CA (client.crt)
 >
 >Client private key used to establish a secure connection (client.key)
+
+
+### Solve:
 >
 >TTY audit log of a developer's shell activity (audit.log)
 >
