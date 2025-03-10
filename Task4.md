@@ -43,7 +43,7 @@ We see lines that begin with `gagpt -m ...`. These are likely queries to the LLM
 
 We can send a simple get request, using the given `.crt` and `.key` file to make the connection, to the caching proxy at `https://34.195.208.56/?q=query%20string`, with `query%20string` being the `gagpt -m ...` line. This will return us the LLM's response in JSON.
 
-We can write a Python script to automate going through the audit log and find  `gagpt -m ...` lines, which we can use in our get request. 
+We can write a Python script to automate going through the audit log to find  `gagpt -m ...` lines, which we can use in our get request. 
 
 <details>
 	<Summary><b>Click to expand solve.py</b></Summary>
