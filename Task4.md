@@ -134,7 +134,11 @@ Skimming through our responses, I find nothing of note, but there is something p
 
 ![image](https://github.com/user-attachments/assets/c8a29a48-f091-4557-a18f-3f0e2cd5836f)
 
-However, when you clean up these queries (fixing the spelling errors and getting rid of the extraneous characters), the LLM provides a valid response. This means that we're missing out on a whole lot of responses. 
+However, when you clean up these queries (fixing the spelling errors and getting rid of the extraneous characters), the LLM provides a valid response
+
+![image](https://github.com/user-attachments/assets/03bb7436-ef0e-420f-9877-57704adb93b2)
+
+This means that we're missing out on a whole lot of responses!
 
 I modified our already existing script to now allow us to specify what the query is. This allows us to clean up a malformed query we find and to individually get its response
 
