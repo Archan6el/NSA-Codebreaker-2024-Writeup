@@ -230,7 +230,7 @@ This gets us a response, and finally along with it, the suspicious line. Or to b
 
 Our answer is `globals()['ga'] = __import__('ga513e9')`
 
-Submitting this solves Task 4 for us!
+Submitting this solves Task 4!
 
 **Results:**
 >That's the snippet! I doubt the LLM is supposed to suggest an import like that.
