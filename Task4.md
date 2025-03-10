@@ -43,7 +43,7 @@ We see lines that begin with `gagpt -m ...`. These are likely queries to the LLM
 
 We can send a simple get request, using the given `.crt` and `.key` file to make the connection, to the caching proxy at `https://34.195.208.56/?q=query%20string`, with `query%20string` being the `gagpt -m ...` line. This will return us the LLM's response in JSON.
 
-We can write a Python script to automate going through the audit log to find  `gagpt -m ...` lines, which we can use in our get request. 
+We can write a Python script to automate going through the audit log to find  `gagpt -m ...` lines, which we can use in our get request. I save our responses to a file named `queries_and_responses.txt` so that we can take a look at them once the script is done executing. 
 
 <details>
 	<Summary><b>Click to expand solve.py</b></Summary>
@@ -140,7 +140,7 @@ However, when you clean up these queries (fixing the spelling errors and getting
 
 This means that we're missing out on a whole lot of responses!
 
-I modified our already existing script to now allow us to specify what the query is. This allows us to clean up a malformed query we find and to individually get its response
+I modified our already existing script to now allow us to specify what the query is using the variable `cleaned_query`. This allows us to clean up a malformed query we find and to individually get its response. I save the responses to a file named `cleaned.txt`. 
 
 <details>
 	<Summary><b>Click to expand solve-specific.py</b></Summary>
@@ -190,7 +190,7 @@ def save_query_and_response(query, response):
 
 def main():
     # Cleaned-up query
-    cleaned_query = "What's the most efficient way to work with file descriptors and perform non-blocking I/O in Python using the select module"
+    cleaned_query = "INSERT CLEANED QUERY HERE"
 
     # Send the cleaned query to the server
     response = send_query_to_server(cleaned_query)
@@ -206,7 +206,7 @@ if __name__ == '__main__':
 
 </details>
 
-Some of the queries obviously aren't code related. There's some revolving around a father asking for parenting advice for his daughter, someone asking about a pet python, and many other "non-serious" queries. I skimmed through to specifically get the responses for code related malformed queries, but still, there was nothing suspicious in the responses. 
+Some of the queries obviously aren't code related. There's some revolving around a father asking for parenting advice for his daughter, someone asking about a pet python, and many other "non-serious" queries. I went through the audit log, specifically getting the responses for code related malformed queries, but still, there was nothing suspicious in the responses. 
 
 Again, going through the audit log, I was trying to find anything that I may have missed. My eye then caught something, and to be honest, I got pretty lucky that I noticed it. There was one query that instead of beginning with `gagpt -m ...`, began with `gagpt m ...`, without the `-`. Since our Python script was made to find all queries that specifically began with `gagpt -m ...`, it didn't pick up on this query. 
 
