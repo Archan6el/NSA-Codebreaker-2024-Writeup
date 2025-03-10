@@ -39,9 +39,9 @@ First, let's take a look at the audit log. It's really long, but remembering tha
 
 ![image](https://github.com/user-attachments/assets/1e73fabc-4713-4570-997c-c5fb73007f13)
 
-We see lines that begin with `gagpt -m ...`. These are likely queries to the LLM. We know that we are trying to find any suspicious lines that have been added to the LLM's responses. Well, how do we get the responses? That's where the caching server comes into play. 
+We see lines that begin with `gagpt -m ...`. These are likely queries to the LLM. We know that we are trying to find any suspicious lines that have been added to the LLM's responses, so how do we get the responses? That's where the caching proxy comes into play. 
 
-We send a simple get request, using the given `.crt` and `.key` file to make the connection, to the caching server at `https://34.195.208.56/?q=query%20string`, with `query%20string` being the `gagpt -m ...` line. This will return us the LLM's response in JSON.
+We can send a simple get request, using the given `.crt` and `.key` file to make the connection, to the caching proxy at `https://34.195.208.56/?q=query%20string`, with `query%20string` being the `gagpt -m ...` line. This will return us the LLM's response in JSON.
 
 We can write a Python script to automate going through the audit log and find  `gagpt -m ...` lines, which we can use in our get request. 
 
