@@ -32,3 +32,96 @@
 
 
 ### Solve:
+
+So this Task gives us an audit log, as well as a certificate and key we can use to connect to a caching proxy. 
+
+First, let's take a look at the audit log. It's really long, but remembering that we're looking for presumably LLM queries, we immediately see some interesting lines:
+
+![image](https://github.com/user-attachments/assets/1e73fabc-4713-4570-997c-c5fb73007f13)
+
+We see lines that begin with `gagpt -m ...`. These are likely queries to the LLM. We know that we are trying to find any suspicious lines that have been added to the LLM's responses. Well, how do we get the responses? That's where the caching server comes into play. 
+
+We send a simple get request to the caching server, using the given `.crt` and `.key` file to make the connection, to `https://34.195.208.56/?q=query%20string`, with `query%20string` being the `gagpt -m ...` line. 
+
+We can write a Python script to automate going through the audit log and find  `gagpt -m ...` lines, which we can use in our get request. 
+
+<details>
+	<Summary><b>Click to expand solve.py</b></Summary>
+
+```Python
+import re
+import requests
+import urllib.parse
+import json
+
+# Define the log file path and server URL
+log_file_path = 'audit.log'
+server_url = "https://34.195.208.56/"
+
+# Define the certificate paths (if needed)
+client_cert = 'client.crt'
+client_key = 'client.key'
+output_file = 'queries_and_responses.txt'
+
+def extract_gagpt_queries(log_file_path):
+    """
+    Extracts 'gagpt -m' queries from the audit log.
+    """
+    with open(log_file_path, 'r') as log_file:
+        lines = log_file.readlines()
+
+    # Regex to match the gagpt -m queries
+    gagpt_queries = []
+    for line in lines:
+        match = re.search(r'd=gagpt -m "(.*?)"', line)
+        if match:
+            query = match.group(1)
+            gagpt_queries.append(query)
+
+    return gagpt_queries
+
+def send_query_to_server(query):
+    """
+    Sends a query to the server using curl-like behavior in Python with requests.
+    """
+    # URL encode the query
+    encoded_query = urllib.parse.quote(query)
+    
+    # Define the URL with the query parameter
+    url = f"{server_url}?q={encoded_query}"
+    
+    # Send the GET request
+    try:
+        response = requests.get(url, cert=(client_cert, client_key), verify=False)  # Disable SSL verification for now
+        if response.status_code == 200:
+            return response.json()  # Assuming the response is in JSON format
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.RequestException as e:
+        return f"Request failed: {e}"
+
+def save_query_and_response(query, response):
+    """
+    Saves the query and response to a file with line spacing.
+    """
+    with open(output_file, 'a') as file:
+        file.write(f"QUERY: {query}\n")
+        file.write(f"RESPONSE: {json.dumps(response, indent=2)}\n")  # Pretty-print the JSON response
+        file.write("\n")  # Add a blank line for spacing
+
+def main():
+    # Extract queries from the audit log
+    queries = extract_gagpt_queries(log_file_path)
+
+    # Iterate over each query and send it to the server
+    for query in queries:
+        
+        print(f"Sending query: {query}")
+        response = send_query_to_server(query)
+        save_query_and_response(query, response)
+        print(f"Response saved for query: {query}")
+
+if __name__ == '__main__':
+    main()
+```
+</details>
