@@ -378,9 +378,13 @@ When sending a message, you use the public key of the recipient. When decrypting
 
 ![image](https://github.com/user-attachments/assets/2a0cd1ec-d5bc-4725-9a8b-6d44fb6dbc87)
 
+Also lastly, it seems that the messages once encrypted are converted to base64. Due to this, when decrypting, it expects the message in base64:
+
+![image](https://github.com/user-attachments/assets/ab760167-ecc5-4dcf-920e-fe5714623cec)
+
 Well, since we know this program is used to send encrypted messages through pidgin, let's see if we can go through the chats and find any sent messages. 
 
-First off, in a chat with `B055MAN`, we see that `B055MAN` sends `570RM` the password for the USB using `pidgin_rsa_encryption.py`. `570RM` then seems to store it using `pm.py`
+First off, in a chat with `B055MAN`, we see that `B055MAN` sends `570RM` the password for the USB using `pidgin_rsa_encryption.py`. `570RM` then seems to store it using `pm.py`. As we can see, the encrypted message is in base64. 
 
 ![image](https://github.com/user-attachments/assets/0648896f-7dad-42c9-aa36-4318c7a5b90a)
 
@@ -401,7 +405,7 @@ And finally, it is also sent to user `V3RM1N`
 
 Interesting. So we have the same exact message sent to 3 different people, and subsequently, with 3 different public keys. 
 
-We have:
+We have the following base64 encoded passwords:
 
 AWS password to 4C1D: `P3bTAhZTbtlu9aV+8X5oFQ+F8qqcMpVGZTtT1p8QT3TLMaBGWVqkACIWkaQov/2UnBUQcSY47aIfwATVclTZXj7EuTOIt+9hSntNiw69MYl3wHw+wHxi9KjmU2l5UffPoAj+q+AL0SlwIKdzRWEjXOswQdXkzBeFJ4RxeNMiNkuHyaoUeylG4nrZLxev0b1nUUHu3NTxQwCnv2+mUv8bh9MW0fxsvS3vTLYBYaCTAcu+RaKLP5YyNKw1sH0EqtuDAu043V6BKbGdm9xKWh27e5aj8RFnLo9UhvdB6UkglwlPBsBxE9dZLx7xjsauJHdssGFfT3rf48O+YiEkKPGh3A==` 
 
@@ -426,3 +430,69 @@ We have to check the public keys for `4C1D`, `PL46U3`, and `V3RM1N`:
 ![image](https://github.com/user-attachments/assets/092b5d96-69b1-4a95-b1a7-4c71b181b35f)
 
 Look at that, they all have a public exponent of 3! This means that we can indeed use Hastad's Broadcast Attack to decrypt the AWS password. 
+
+We can write a Python script to do this. Using the knowledge of the padding used from `pidgin_rsa_encryption.py`, the public keys, and the base64 encoded messages, we end up with the following script
+
+<details>
+	<Summary><b>Click to expand hastads_broadcast_attack.py</b></Summary>
+
+ ```Python
+
+from Crypto.PublicKey import RSA
+from math import gcd
+from sympy import integer_nthroot
+from sympy.ntheory.modular import crt
+import base64
+
+# Function to load modulus from a PEM public key file
+def get_modulus_from_pem(pem_file):
+    with open(pem_file, 'rb') as f:
+        public_key = RSA.import_key(f.read())
+    return public_key.n
+
+# Function to decode Base64 ciphertext into an integer
+def base64_to_int(b64_ciphertext):
+    decoded_bytes = base64.b64decode(b64_ciphertext)
+    return int.from_bytes(decoded_bytes, byteorder='big')
+
+# Load the moduli from public keys
+n_4C1D = get_modulus_from_pem(".keys/4C1D_public_key.pem")
+n_PL46U3 = get_modulus_from_pem(".keys/PL46U3_public_key.pem")
+n_V3RM1N = get_modulus_from_pem(".keys/V3RM1N_public_key.pem")
+
+# Ensure the moduli are pairwise coprime
+g1 = gcd(n_4C1D, n_PL46U3)
+g2 = gcd(n_4C1D, n_V3RM1N)
+g3 = gcd(n_PL46U3, n_V3RM1N)
+assert g1 == g2 == g3 == 1, "The moduli are not pairwise coprime!"
+
+# Convert Base64 ciphertexts into integers
+ciphertexts = [
+    base64_to_int("P3bTAhZTbtlu9aV+8X5oFQ+F8qqcMpVGZTtT1p8QT3TLMaBGWVqkACIWkaQov/2UnBUQcSY47aIfwATVclTZXj7EuTOIt+9hSntNiw69MYl3wHw+wHxi9KjmU2l5UffPoAj+q+AL0SlwIKdzRWEjXOswQdXkzBeFJ4RxeNMiNkuHyaoUeylG4nrZLxev0b1nUUHu3NTxQwCnv2+mUv8bh9MW0fxsvS3vTLYBYaCTAcu+RaKLP5YyNKw1sH0EqtuDAu043V6BKbGdm9xKWh27e5aj8RFnLo9UhvdB6UkglwlPBsBxE9dZLx7xjsauJHdssGFfT3rf48O+YiEkKPGh3A=="),
+    base64_to_int("QjPtJ+yOgegFCSQ4HTNcL45af+MIVeWwJeDZ9HQS4HAVocf9lsusPt7GyfhbqN4DnT7HViX0jpTxPt6BcwHex2+WswUgaD12i7RgnjLBBaN6yldfCa2LEGib09DIKBSh8s90rlbkNbEfJqPIpM/bFjKLWB/vsUxvCypHhs6TVMxIxk0hSzh96AFcLt17rDa8Ly+cciZDzQpVMSYy6WECtRrITcEN/lgqyztk1kA04hd6Hr+uAtxwPAEfsx7QZ8kotSM7ZFHGL0OBhNj9x/LGnPvN+trbyKcieaF9uRD26W9TUQ9DintFrjcCNe8F+MhcJw9bNOMIcIQyxv3kbZ3hcA=="),
+    base64_to_int("ZgVvYj1jxIiWnHStb0VUDIwV/ckkgpERykveSolnV5NAHeFeaAvu0bH2HIppKSwsdpQvgqfYdd3fyeM2ywyLjrSQxFkj2Ndkm6YzdnaSZMKd0tUT7recxlhkjlZ4U0cXazAVvwj8EMefLFDhj6JhcDIwZNS0CZiIwJmj3ooaJMU0uDAorGf5AeOGaYQzfo2G5rwxW1p16u996bDsvY/Cryk7DMGAyV2UDwkgCdp0LHEsfZd+15GRavlL9qWrQs8p3oGd5JGVkMinVu27sDdAwcT+l+buzc6msvLpK2K2BOGEY01UmVA1A2EEQVEKCPoAtF9vhOVSrj/kO5Tyj3A5mg=="),
+]
+moduli = [n_4C1D, n_PL46U3, n_V3RM1N]
+
+# Combine ciphertexts using CRT
+m_e, _ = crt(moduli, ciphertexts)
+
+# Take the e-th root to recover the padded plaintext
+e = 3
+padded_plaintext, exact = integer_nthroot(m_e, e)
+if exact:
+    print(f"Padded plaintext (integer): {padded_plaintext}")
+    # Convert back to bytes to inspect the padded plaintext
+    plaintext_bytes = padded_plaintext.to_bytes((padded_plaintext.bit_length() + 7) // 8, byteorder='big')
+    print(f"Padded plaintext (bytes): {plaintext_bytes}")
+else:
+    print("Failed to compute the exact root.")
+```
+
+</details>
+
+Running this, we get the following result!
+
+![image](https://github.com/user-attachments/assets/a7b9f326-1743-4b53-bf45-b82b0a1e91de)
+
+So the AWS password is `X?-d|C]jXN~Txh|Ew|`
