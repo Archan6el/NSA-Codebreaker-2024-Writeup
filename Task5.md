@@ -349,3 +349,19 @@ if __name__ == '__main__':
     main()
 ```
 </details>
+
+Taking a look at the `pm.py` file first, we can see that this is what's responsible for the `.passwords` directory. That weird hash directory indeed was a hash! The program stores passwords in a directory based on the md5 hash of the master password
+
+![image](https://github.com/user-attachments/assets/28400eea-a8f0-4ded-a157-dc4a2d16e20c)
+
+Also, it seems to encrypt the passwords using AES CFB mode. It uses the master password to derive the key used for the AES encryption
+
+![image](https://github.com/user-attachments/assets/f39e0a15-1985-47bc-a2ff-29abc5123b05)
+
+This means that we also need said master password in order to decrypt any of the passwords
+
+![image](https://github.com/user-attachments/assets/0c89598d-63f4-4b8b-b39c-3786aa35f8f7)
+
+Since the master password is a md5 hash, I tried to crack it using rockyou, but no dice.
+
+Without the master password, we kind of can't really do anything here. Let's now take a look at `pidgin_rsa_encryption.py`
