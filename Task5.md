@@ -414,3 +414,15 @@ USB Password to 570RM: `REpUJtDj6C6q8A8lfAPM1C749yBATyjHZBder8fIMAyxxWoXRNRazVfd
 Our main focus are those AWS passwords though. Due to the interesting set up, I start googling, and lo' and behold, I find something very interesting. 
 
 [Hastad's Broadcast Attack](https://docs.xanhacks.xyz/crypto/rsa/08-hastad-broadcast-attack/) is an attack that utilizes the Chinese Remainder Theorem (CRT). Essentially, if the same message is sent to at least 3 others, and their public keys all have the same small public exponent (ideally `e = 3`), we get a system of equations that we can solve with CRT. [This](https://github.com/ashutosh1206/Crypton/blob/master/RSA-encryption/Attack-Hastad-Broadcast/README.md) also provides more info if you'd like to learn more. 
+
+This is *exactly* what's going on here!
+
+First of all, let's check to see if the public keys do indeed have a small public exponent
+
+We can use [RsaCtfTool](https://github.com/RsaCtfTool/RsaCtfTool) for this. We just have to run `python3 python3 RsaCtfTool.py --publickey <PUBLIC-KEY> --dumpkey`
+
+We have to check the public keys for `4C1D`, `PL46U3`, and `V3RM1N`:
+
+![image](https://github.com/user-attachments/assets/092b5d96-69b1-4a95-b1a7-4c71b181b35f)
+
+Look at that, they all have a public exponent of 3! This means that we can indeed use Hastad's Broadcast Attack to decrypt the AWS password. 
