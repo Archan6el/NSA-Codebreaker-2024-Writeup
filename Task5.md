@@ -365,3 +365,50 @@ This means that we also need said master password in order to decrypt any of the
 Since the master password is a md5 hash, I tried to crack it using rockyou, but no dice.
 
 Without the master password, we kind of can't really do anything here. Let's now take a look at `pidgin_rsa_encryption.py`
+
+Looking at the code, it's evident that `pidgin_rsa_encryption.py` is responsible for the `.purple` directory, which contained the chat message logs. 
+
+![image](https://github.com/user-attachments/assets/af1c0a02-5b7c-40a6-a7ec-fe35ebb36eee)
+
+This program seems to use RSA to send encrypted messages and receive and subsequently decrypt messages via the pidgin chat platform
+
+![image](https://github.com/user-attachments/assets/0ab01a91-1596-4398-a0a3-848309ad2390)
+
+When sending a message, you use the public key of the recipient. When decrypting a received message, you use your own private key. This is just standard RSA.
+
+![image](https://github.com/user-attachments/assets/2a0cd1ec-d5bc-4725-9a8b-6d44fb6dbc87)
+
+Well, since we know this program is used to send encrypted messages through pidgin, let's see if we can go through the chats and find any sent messages. 
+
+First off, in a chat with `B055MAN`, we see that `B055MAN` sends `570RM` the password for the USB using `pidgin_rsa_encryption.py`. `570RM` then seems to store it using `pm.py`
+
+![image](https://github.com/user-attachments/assets/0648896f-7dad-42c9-aa36-4318c7a5b90a)
+
+Let's see if there's anything more we can find.
+
+In a message with `PL46U3`, we see that the AWS password the group was using was changed, so `570RM` needs to send it to `PL46U3` and the other group members
+
+![image](https://github.com/user-attachments/assets/0775a8a1-84c2-4379-a1d3-8c1b4f59448f)
+![image](https://github.com/user-attachments/assets/2ad72628-b872-420b-90bd-6f82539c0e3b)
+
+We see that same AWS password is seemingly sent to user `4C1D` too
+
+![image](https://github.com/user-attachments/assets/bc33f89b-91c8-4296-a532-6858c9a7d00f)
+
+And finally, it is also sent to user `V3RM1N`
+
+![image](https://github.com/user-attachments/assets/546fc673-7b97-45bb-8cf2-228b2c68ea48)
+
+Interesting. So we have the same exact message sent to 3 different people, and subsequently, with 3 different public keys. 
+
+We have:
+
+AWS password to 4C1D: `P3bTAhZTbtlu9aV+8X5oFQ+F8qqcMpVGZTtT1p8QT3TLMaBGWVqkACIWkaQov/2UnBUQcSY47aIfwATVclTZXj7EuTOIt+9hSntNiw69MYl3wHw+wHxi9KjmU2l5UffPoAj+q+AL0SlwIKdzRWEjXOswQdXkzBeFJ4RxeNMiNkuHyaoUeylG4nrZLxev0b1nUUHu3NTxQwCnv2+mUv8bh9MW0fxsvS3vTLYBYaCTAcu+RaKLP5YyNKw1sH0EqtuDAu043V6BKbGdm9xKWh27e5aj8RFnLo9UhvdB6UkglwlPBsBxE9dZLx7xjsauJHdssGFfT3rf48O+YiEkKPGh3A==` 
+
+AWS Password to PL46U3: `QjPtJ+yOgegFCSQ4HTNcL45af+MIVeWwJeDZ9HQS4HAVocf9lsusPt7GyfhbqN4DnT7HViX0jpTxPt6BcwHex2+WswUgaD12i7RgnjLBBaN6yldfCa2LEGib09DIKBSh8s90rlbkNbEfJqPIpM/bFjKLWB/vsUxvCypHhs6TVMxIxk0hSzh96AFcLt17rDa8Ly+cciZDzQpVMSYy6WECtRrITcEN/lgqyztk1kA04hd6Hr+uAtxwPAEfsx7QZ8kotSM7ZFHGL0OBhNj9x/LGnPvN+trbyKcieaF9uRD26W9TUQ9DintFrjcCNe8F+MhcJw9bNOMIcIQyxv3kbZ3hcA==`
+
+AWS Password to V3RM1N: `ZgVvYj1jxIiWnHStb0VUDIwV/ckkgpERykveSolnV5NAHeFeaAvu0bH2HIppKSwsdpQvgqfYdd3fyeM2ywyLjrSQxFkj2Ndkm6YzdnaSZMKd0tUT7recxlhkjlZ4U0cXazAVvwj8EMefLFDhj6JhcDIwZNS0CZiIwJmj3ooaJMU0uDAorGf5AeOGaYQzfo2G5rwxW1p16u996bDsvY/Cryk7DMGAyV2UDwkgCdp0LHEsfZd+15GRavlL9qWrQs8p3oGd5JGVkMinVu27sDdAwcT+l+buzc6msvLpK2K2BOGEY01UmVA1A2EEQVEKCPoAtF9vhOVSrj/kO5Tyj3A5mg==`
+
+USB Password to 570RM: `REpUJtDj6C6q8A8lfAPM1C749yBATyjHZBder8fIMAyxxWoXRNRazVfduEVWm7veRRgDU7ndk5LIuqh3CHJMbcbB1GCHn4QomB6CGtYTuG75VTrfOxelprHPYj240mNeLi6saQsAKRrvtpl1woeSobY1ayT26DZ0DXETT3I8K/OVWi2aVR0VTIvrg5yx2t6GeKg66R9I++bAH14OyZW/C2CbIvGQzE8pv/Ww69Tv0POqdqYwDs9/Oi0oCXfPxq09eytLrBKpOEheoYebBJA11PLD/7e1SnIpOnPe6ySI1WLHYofc1da/tZuBUvpo6eFRiSK7R5atCk2l2Oex/I6OFA==`
+
+Our main focus are those AWS passwords though. 
