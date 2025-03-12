@@ -25,7 +25,7 @@
 
 ## Solve:
 
-Alright so for this task, we're given two zip files and one tar file. The tar file contains the image with the encrypted file system. `files.zip` contains interesting files from the user's directory, and `bins.zip` contains interesting files from the `bin/` directory. Well, let's unzip these and see what we get, shall we?
+Alright so for this task, we're given two zip files and one tar file. The tar file contains the image with the encrypted file system. `files.zip` contains interesting files from the user's directory, and `bins.zip` contains interesting files from the `bin/` directory. Well, let's unzip the `.zip` files and see what we get, shall we?
 
 Unzipping `bins.zip` gives us two executable files. 
 
