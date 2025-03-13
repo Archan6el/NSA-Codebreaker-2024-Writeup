@@ -742,9 +742,92 @@ If we go to the mount point, we find:
 
 ![image](https://github.com/user-attachments/assets/56af4cfc-b4ed-4623-ada9-9a199aae28b9)
 
-The `lock` file is the program seems to unmount the filesystem. However, the `unlock` file seems to be the program that decrypts the encrypted data and likely mounts the file system. Most importantly, it expects a password. 
+The `unlock` file seems to be the program that decrypts the encrypted data and likely mounts the file system. Most importantly, it expects a password. 
 
 ![image](https://github.com/user-attachments/assets/d9bb8185-9512-4bf5-ada6-b9e240fec00a)
 
+This is the program we should be brute forcing. 
 
+We can write a Python script to continuously run this unlock program, supplying the first 16 characters of the USB password we found by reversing the AES CFB encryption (`*g55.^y$Te*XLWX-`), and then using all the 2 character combos in `string.ascii_letters`, `string.digits`, and `string.puncutation` as the last 2 characters until we get a match. Using `string.ascii_letters`, `string.digits`, and `string.puncutation` for the last 2 characters comes from how `pm.py` creates its passwords:
 
+![image](https://github.com/user-attachments/assets/e9257308-2964-4bb6-87fa-05cf64295dd6)
+
+Note that PyLingual doesn't always get decompilation down 100%. Though we see a `*` and `/` here, these are more than likely supposed to be `+`'s. 
+
+We end up with this brute force script:
+
+<details>
+
+ <Summary>Click to expand brute.py</Summary>
+
+ ```Python
+
+import pexpect
+import time
+import string
+
+# Path to the unlock script
+unlock_path = "/mnt/task5/unlock"
+
+# Define your password prefix and the character set for the last two bytes
+password_prefix = "*g55.^y$Te*XLWX-"  # The known part of the password
+charset = string.ascii_letters + string.digits + string.punctuation
+timeout = 30  # Set a timeout for pexpect
+
+# Function to attempt password combinations
+def try_passwords():
+    for c1 in charset:
+        for c2 in charset:
+            password = password_prefix + c1 + c2
+            try:
+                # Start the pexpect session
+                child = pexpect.spawn(unlock_path, timeout=timeout)
+                
+                # Expect the password prompt
+                #print(f"Trying password: {password}")
+                child.expect("Password:")
+                
+                # Send the password to the script
+                child.sendline(password)
+                
+                # Capture the output for debugging
+                child.expect(pexpect.EOF)  # Wait for EOF, this allows us to capture the output
+                
+                # Get the output before EOF
+                output_before_eof = child.before.decode('utf-8', errors='ignore')
+                #print(f"Output before EOF: {output_before_eof}")
+                
+                # Check if the process exited with success or failure
+                if "incorrect" in output_before_eof:
+                    #print(f"Incorrect password: {password}")
+                    pass
+                elif "Success" in output_before_eof:
+                    print(f"Password found: {password}")
+                    return password
+                else:
+                    print(f"Unexpected output before EOF: {output_before_eof}")
+                    print(f"Password used was {password}")
+                    return password
+            
+            except pexpect.exceptions.TIMEOUT:
+                # Handle timeout
+                print(f"Timeout while trying password: {password}")
+            except pexpect.exceptions.EOF:
+                # Handle EOF (process closed, likely due to incorrect password)
+                print(f"EOF encountered while trying password: {password}")
+            except Exception as e:
+                # Handle any other exceptions
+                print(f"Error trying password {password}: {e}")
+
+# Start the password brute-forcing process
+try_passwords()
+print("No dice")
+```
+</details>
+
+Running this took a while. I just ran it and then went to watch the cfb playoffs as it was running. After coming back to check on the progress, we did indeed find the password!: `*g55.^y$Te*XLWX-4;`
+
+Submitting this solves Task 5 for us, and we are now high performers!
+
+**Results:**
+>It worked! OMG that was some bad crypto.
