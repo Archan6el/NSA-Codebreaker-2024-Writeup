@@ -384,7 +384,7 @@ Also lastly, it seems that the messages once encrypted are converted to base64. 
 
 Well, since we know this program is used to send encrypted messages through pidgin, let's see if we can go through the chats and find any sent messages. 
 
-First off, in a chat with `B055MAN`, we see that `B055MAN` sends `570RM` the password for the USB using `pidgin_rsa_encryption.py`. `570RM` then seems to store it using `pm.py`. As we can see, the encrypted message is in base64. 
+First off, in a chat with a user named `B055MAN`, we see that `B055MAN` sends `570RM` the password for the USB using `pidgin_rsa_encryption.py`. `570RM` then seems to store it using `pm.py`. As we can see, the encrypted message is in base64. 
 
 ![image](https://github.com/user-attachments/assets/0648896f-7dad-42c9-aa36-4318c7a5b90a)
 
