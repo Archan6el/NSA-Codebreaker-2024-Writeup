@@ -552,3 +552,71 @@ for iv, files in iv_dict.items():
             print(f"  - {file}")
 ```
 </details>
+
+Running this gets us:
+![image](https://github.com/user-attachments/assets/e4f1c655-3b1b-4287-be70-d303ae5ab3fc)
+
+Well would you look at that. The AWS password and USB password both have the same IV. This must be related to the intended solve!
+
+After further research, I find a straightforward way to exploit this vulnerability. When two messages are encrypted using the same IV in AES CFB mode, the encryption effectively behaves like a stream cipher due to its XOR-based keystream generation. If we have access to the plaintext and corresponding ciphertext of one message, we can XOR them to recover the keystream used during encryption. Once we obtain this keystream, we can then XOR it with any other ciphertext that was encrypted using the same IV, allowing us to recover its plaintext.
+
+Let's put this to the test shall we? Again, we can write a Python script to do this. We'll take the encrypted AWS password and it's known plaintext and XOR them together. This in theory should get us the keystream. We can then XOR the keystream and the encrypted USB password to get the plaintext USB password. 
+
+<details>
+<Summary>Click to expand reverse_AES_CFB.py</Summary>
+
+ ```Python
+# Path to the ciphertext files
+C1_file_path = '/home/archangel/nsa-codebreaker-2024/task5/.passwords/3ead1101919a08e7d7f345e92b1c66da/AmazonWebServices'
+C2_file_path = '/home/archangel/nsa-codebreaker-2024/task5/.passwords/3ead1101919a08e7d7f345e92b1c66da/USB-128'
+
+# Known plaintext (P1)
+P1 = b'X?-d|C]jXN~Txh|Ew|'  # Replace this with your known plaintext
+
+# Step 1: Read the known ciphertext (C1) from file
+with open(C1_file_path, 'rb') as f:
+    C1 = f.read()
+
+# Step 2: Read the second ciphertext (C2) from file
+with open(C2_file_path, 'rb') as f:
+    C2 = f.read()
+
+# Step 3: Ensure ciphertext lengths match and the plaintext length is valid
+if len(C1) != len(C2):
+    print("Error: Ciphertexts have different lengths.")
+    exit()
+
+if len(P1) > len(C1):
+    print("Error: Known plaintext is longer than ciphertext.")
+    exit()
+
+# Step 4: Recover the keystream by XORing the known ciphertext (C1) and plaintext (P1)
+keystream = bytes([c1_byte ^ p1_byte for c1_byte, p1_byte in zip(C1[16:], P1)])
+
+# Debug: Print keystream
+print(f"Keystream: {keystream.hex()}")
+
+# Step 5: Decrypt the second ciphertext (C2) using the keystream
+P2 = bytes([c2_byte ^ keystream_byte for c2_byte, keystream_byte in zip(C2[16:], keystream)])
+
+# Check if the output is too similar to the known plaintext (P1)
+if P2.decode('utf-8', errors='ignore').startswith(P1.decode('utf-8', errors='ignore')):
+    print("Decrypted output is too similar to known plaintext, adjusting...")
+
+# Ensure proper padding to match expected password length (18 characters)
+if len(P2) < 18:
+    P2 += b' ' * (18 - len(P2))  # Pad the result to the expected length (18 characters)
+elif len(P2) > 18:
+    P2 = P2[:18]  # Trim to the expected length
+
+# Debug: Print final decrypted output
+print(f"Final Decrypted Output: {P2.decode('utf-8', errors='ignore')}")
+```
+
+</details>
+
+Running this gets us
+
+![image](https://github.com/user-attachments/assets/b5268950-bfb9-4304-bcf4-22c8125bdf10)
+
+Did we do it? Is this the password?? I submit `*g55.^y$Te*XLWX-eG` as the password but apparently it's incorrect. What are we doing wrong?
