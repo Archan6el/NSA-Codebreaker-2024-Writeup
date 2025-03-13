@@ -719,6 +719,7 @@ Take note of the original message:
 Notice anything?
 
 Here, let's do it again with a different dummy USB password:
+
 ![image](https://github.com/user-attachments/assets/44854f27-5f47-4526-b07a-19e2b92752dc)
 ![image](https://github.com/user-attachments/assets/a5e7853b-90b1-4dd8-8814-3ca41ef9a19f)
 
