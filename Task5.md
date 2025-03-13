@@ -559,7 +559,7 @@ Running this gets us:
 
 Well would you look at that. The AWS password and USB password both have the same IV. This must be related to the intended solve!
 
-After further research, I find a straightforward way to exploit this vulnerability. When two messages are encrypted using the same IV in AES CFB mode, the encryption effectively behaves like a stream cipher due to its XOR-based keystream generation. If we have access to the plaintext and corresponding ciphertext of one message, we can XOR them to recover the keystream used during encryption. Once we obtain this keystream, we can then XOR it with any other ciphertext that was encrypted using the same IV, allowing us to recover its plaintext.
+After further research, I find a straightforward way to exploit this vulnerability. When two messages of the same length are encrypted using the same IV in AES CFB mode, the encryption effectively behaves like a stream cipher due to its XOR-based keystream generation. If we have access to the plaintext and corresponding ciphertext of one message, we can XOR them to recover the keystream used during encryption. Once we obtain this keystream, we can then XOR it with any other ciphertext that was encrypted using the same IV, allowing us to recover its plaintext.
 
 Let's put this to the test shall we? Again, we can write a Python script to do this. We'll take the encrypted AWS password and it's known plaintext and XOR them together. This in theory should get us the keystream. We can then XOR the keystream and the encrypted USB password to get the plaintext USB password. 
 
@@ -621,3 +621,130 @@ Running this gets us
 ![image](https://github.com/user-attachments/assets/b5268950-bfb9-4304-bcf4-22c8125bdf10)
 
 Did we do it? Is this the password?? I submit `*g55.^y$Te*XLWX-eG` as the password but apparently it's incorrect. What are we doing wrong?
+
+I start playing around with the encryption and decryption on my own, writing a Python script that essentially mimics the encryption going on in the challenge. I use the same AWS password, but I use a dummy USB password, key, etc. I assume that the USB password is 18 characters long, since that's the default password length that `pm.py` makes its passwords with, and is also the length of the AWS password. 
+
+![image](https://github.com/user-attachments/assets/ecf71876-4df8-4af5-a69c-448cd374ccfe)
+
+I end up with this script and dummy USB password, and I find something very intriguing:
+
+<details>
+
+ <Summary>Click to expand testing.py</Summary>
+
+ ```Python
+
+import hashlib
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+import time
+
+# The salt and iterations for PBKDF2HMAC (as used in the password manager)
+SALT = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+ITERATIONS = 100000
+
+# Derive a key from the password using PBKDF2HMAC
+def derive_key(password: str) -> bytes:
+    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=SALT, iterations=ITERATIONS, backend=default_backend())
+    return kdf.derive(password.encode())
+
+# Encrypt a message using AES with the derived key and a given IV (using CFB mode)
+def encrypt_message(message: str, key: bytes) -> bytes:
+    
+    iv = hashlib.md5(b"mungus").digest()  # Generate IV using MD5 of the timestamp
+    cipher = Cipher(algorithms.AES(key), modes.CFB(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+    encrypted_message = encryptor.update(message.encode()) + encryptor.finalize()
+    return iv + encrypted_message  # Prepend the IV to the ciphertext
+
+# XOR two byte sequences
+def xor_bytes(byte_seq1: bytes, byte_seq2: bytes) -> bytes:
+    return bytes([a ^ b for a, b in zip(byte_seq1, byte_seq2)])
+
+# Decrypt the message using XOR (working directly with raw bytes)
+def decrypt_using_keystream_raw(encrypted_data: bytes, keystream: bytes) -> bytes:
+    return xor_bytes(encrypted_data, keystream)
+
+# Define the password and derive the key
+password = "examplepassword"
+key = derive_key(password)
+
+# Encrypt two messages
+message1 = "X?-d|C]jXN~Txh|Ew|"
+message2 = "test0ster|69^gh$0m"
+encrypted_message1 = encrypt_message(message1, key)
+encrypted_message2 = encrypt_message(message2, key)
+
+# Extract the IVs and ciphertexts from the encrypted data
+iv1 = encrypted_message1[:16]
+ciphertext1 = encrypted_message1[16:]
+iv2 = encrypted_message2[:16]
+ciphertext2 = encrypted_message2[16:]
+
+# XOR the known plaintext (for message1) with the XOR result to extract the keystream
+known_plaintext = b"X?-d|C]jXN~Txh|Ew|"
+print(len(known_plaintext), len(ciphertext1))
+keystream_part = xor_bytes(known_plaintext, ciphertext1)
+print(keystream_part)
+print(ciphertext2)
+print(len(keystream_part), len(ciphertext2))
+
+# Perform decryption by XORing
+decrypted_message2_raw = xor_bytes(ciphertext2, keystream_part)
+
+# Output the raw bytes of the decrypted message
+print(f"Decrypted Message 2 (Raw Bytes): {decrypted_message2_raw}")
+
+# Convert the decrypted raw bytes to hex for inspection
+decrypted_message2_hex = decrypted_message2_raw.hex()
+print(f"Decrypted Message 2 (Hex): {decrypted_message2_hex}")
+
+# If you want to convert the bytes to an integer representation (like in RSA):
+decrypted_message2_int = int.from_bytes(decrypted_message2_raw, byteorder='big')
+print(f"Decrypted Message 2 (Integer): {decrypted_message2_int}")
+```
+
+</details>
+
+If we run this, we get this as our decrypted message:
+
+![image](https://github.com/user-attachments/assets/9b4d0c22-8cf8-4223-94f7-ce998d878284)
+
+Take note of the original message:
+
+![image](https://github.com/user-attachments/assets/f0d545da-695c-40fb-a5a6-9b6479078318)
+
+Notice anything?
+
+Here, let's do it again with a different dummy USB password:
+![image](https://github.com/user-attachments/assets/44854f27-5f47-4526-b07a-19e2b92752dc)
+![image](https://github.com/user-attachments/assets/a5e7853b-90b1-4dd8-8814-3ca41ef9a19f)
+
+It might not be apparent from these 2 examples alone, but after a lot of testing, one common thing kept happening. The last 2 characters of the decrypted password is always wrong, every time. 
+
+That could be it. What if we do have the correct USB password, but the last two characters are just wrong? There's only one real way to find out. Time to brute force. 
+
+First of all, let's mount the encrypted disk drive. We extract the disk drive from the archive:
+
+![image](https://github.com/user-attachments/assets/c1a1f82e-9db7-42f0-a2c1-e44e4d41779b)
+
+And then we mount it:
+
+![image](https://github.com/user-attachments/assets/b37bbbf2-32f4-40b0-a3ec-9286276e2e22)
+
+If we go to the mount point, we find:
+
+![image](https://github.com/user-attachments/assets/fd80a958-9d66-43e9-81fa-26a4085b9d4d)
+
+`.data` seems to contain all the encrypted data:
+
+![image](https://github.com/user-attachments/assets/56af4cfc-b4ed-4623-ada9-9a199aae28b9)
+
+The `lock` file is the program seems to unmount the filesystem. However, the `unlock` file seems to be the program that decrypts the encrypted data and likely mounts the file system. Most importantly, it expects a password. 
+
+![image](https://github.com/user-attachments/assets/d9bb8185-9512-4bf5-ada6-b9e240fec00a)
+
+
+
