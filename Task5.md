@@ -41,7 +41,7 @@ First looking into these hidden directories, `.purple` seems to contain what see
 
 Each of these directories contain at least one file containing some chat messages. We'll take a look at these later
 
-The `.passwords` directory contains exactly that, passwords for different services, but they're oddly all within a directory that looks to be a hash. Also, when we try to read any of the passwords, they seem to be encrypted
+The `.passwords` directory contains exactly that, passwords for different services, but they're oddly all within a directory that looks to be a hash. Also, when we try to read any of the passwords, they seem to be encrypted, as seen below when trying to read the USB password
 
 ![image](https://github.com/user-attachments/assets/4d92cf91-306c-4905-908c-4c7b93fc1621)
 
@@ -388,7 +388,7 @@ First off, in a chat with a user named `B055MAN`, we see that `B055MAN` sends `5
 
 ![image](https://github.com/user-attachments/assets/0648896f-7dad-42c9-aa36-4318c7a5b90a)
 
-Let's see if there's anything more we can find.
+This is likely the USB password that we saw earlier! However, there doesn't seem to be much we can do here. Let's see if there's anything more we can find.
 
 In a message with `PL46U3`, we see that the AWS password the group was using was changed, so `570RM` needs to send it to `PL46U3` and the other group members
 
