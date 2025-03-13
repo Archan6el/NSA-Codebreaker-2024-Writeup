@@ -392,7 +392,7 @@ Let's see if there's anything more we can find.
 
 In a message with `PL46U3`, we see that the AWS password the group was using was changed, so `570RM` needs to send it to `PL46U3` and the other group members
 
-![image](https://github.com/user-attachments/assets/0775a8a1-84c2-4379-a1d3-8c1b4f59448f)
+![image](https://github.com/user-attachments/assets/c24aa596-08e9-4461-b89c-e29cbfafda13)
 ![image](https://github.com/user-attachments/assets/2ad72628-b872-420b-90bd-6f82539c0e3b)
 
 We see that same AWS password is seemingly sent to user `4C1D` too
