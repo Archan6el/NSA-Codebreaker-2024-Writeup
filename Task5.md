@@ -41,7 +41,7 @@ First looking into these hidden directories, `.purple` seems to contain what see
 
 Each of these directories contain at least one file containing some chat messages. We'll take a look at these later
 
-The `.passwords` directory contains exactly that. Passwords for different services, but they're oddly all within a directory that looks to be a hash. Also, when we try to read any of the passwords, they seem to be encrypted
+The `.passwords` directory contains exactly that, passwords for different services, but they're oddly all within a directory that looks to be a hash. Also, when we try to read any of the passwords, they seem to be encrypted
 
 ![image](https://github.com/user-attachments/assets/4d92cf91-306c-4905-908c-4c7b93fc1621)
 
