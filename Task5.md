@@ -554,6 +554,7 @@ for iv, files in iv_dict.items():
 </details>
 
 Running this gets us:
+
 ![image](https://github.com/user-attachments/assets/e4f1c655-3b1b-4287-be70-d303ae5ab3fc)
 
 Well would you look at that. The AWS password and USB password both have the same IV. This must be related to the intended solve!
