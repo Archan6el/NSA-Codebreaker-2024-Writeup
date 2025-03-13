@@ -362,7 +362,7 @@ This means that we also need said master password in order to decrypt any of the
 
 ![image](https://github.com/user-attachments/assets/0c89598d-63f4-4b8b-b39c-3786aa35f8f7)
 
-Since the master password is a md5 hash, I tried to crack it using rockyou, but no dice.
+Since the master password is a md5 hash, `3ead1101919a08e7d7f345e92b1c66da`, I tried to crack it using rockyou, but no dice.
 
 Without the master password, we kind of can't really do anything here. Let's now take a look at `pidgin_rsa_encryption.py`
 
