@@ -370,7 +370,7 @@ Looking at the code, it's evident that `pidgin_rsa_encryption.py` is responsible
 
 ![image](https://github.com/user-attachments/assets/af1c0a02-5b7c-40a6-a7ec-fe35ebb36eee)
 
-This program seems to use RSA to send encrypted messages and receive and subsequently decrypt messages via the pidgin chat platform
+This program seems to use RSA to send encrypted messages and decrypt recieved messages via the pidgin chat platform
 
 ![image](https://github.com/user-attachments/assets/0ab01a91-1596-4398-a0a3-848309ad2390)
 
