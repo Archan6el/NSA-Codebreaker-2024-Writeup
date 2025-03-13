@@ -561,7 +561,7 @@ Well would you look at that. The AWS password and USB password both have the sam
 
 After further research, I find a straightforward way to exploit this vulnerability. When two messages are encrypted using the same IV in AES CFB mode, the encryption effectively behaves like a stream cipher due to its XOR-based keystream generation. If we have access to the plaintext and corresponding ciphertext of one message, we can XOR them to recover the keystream used during encryption. Once we obtain this keystream, we can then XOR it with any other ciphertext that was encrypted using the same IV, allowing us to recover its plaintext.
 
-Let's put this to the test shall we? Again, we can write a Python script to do this. We'll take the encrypted AWS password and it's known plaintext and XOR them together. This in theory should get us the keystream. We can then XOR the keystream and the encrypted USB password to get the plaintext USB password. 
+Let's put this to the test shall we? Again, we can write a Python script to do this. We'll take the encrypted AWS password and its known plaintext and XOR them together. This in theory should get us the keystream. We can then XOR the keystream and the encrypted USB password to get the plaintext USB password. 
 
 <details>
 <Summary>Click to expand reverse_AES_CFB.py</Summary>
