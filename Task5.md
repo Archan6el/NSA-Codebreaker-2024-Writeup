@@ -496,3 +496,59 @@ Running this, we get the following result!
 ![image](https://github.com/user-attachments/assets/a7b9f326-1743-4b53-bf45-b82b0a1e91de)
 
 So the AWS password is `X?-d|C]jXN~Txh|Ew|`
+
+Okay so we have the AWS password. How exactly does this help us get the USB password? 
+
+Well, I underwent a lot of research. We seem to be done with the RSA part of this task, or in other words, done with the `pidgin_rsa_encryption.py` part. All signs point to the next part being related to the AES CFB part. I found some interesting stack exchange discussions [here](https://security.stackexchange.com/questions/21371/decryption-on-aes-when-the-same-key-and-iv-are-used) and [here](https://stackoverflow.com/questions/4408839/been-advised-to-use-same-iv-in-aes-implementation?utm_source=chatgpt.com) all warning of using AES CFB and reusing the IV. This piqued my interest. Maybe this has to do with the intended solve? Time to test my hunch. 
+
+If we look at `pm.py`, we can see that the first 16 bytes of each encrypted password actually is the IV
+
+![image](https://github.com/user-attachments/assets/5e66a907-2cb8-4bbd-b47b-c54ada058e5d)
+
+With this in mind, we can go through all the passwords that are stored in the `.passwords` directory just to see if any of them have matching IVs. 
+
+We can write a Python script to do this
+
+<details>
+	<Summary>Click to expand find_IV.py</Summary>
+	
+```Python
+import os
+
+# Path to the directory containing the encrypted password files
+directory_path = '/home/archangel/nsa-codebreaker-2024/task5/.passwords/3ead1101919a08e7d7f345e92b1c66da/'
+
+# Dictionary to store files with matching IVs
+iv_dict = {}
+
+# Loop through each file in the directory
+for filename in os.listdir(directory_path):
+    file_path = os.path.join(directory_path, filename)
+    
+    # Skip if it's not a file
+    if not os.path.isfile(file_path):
+        continue
+
+    # Read the encrypted data from the file
+    with open(file_path, 'rb') as file:
+        encrypted_data = file.read()
+
+    # Extract the IV (first 16 bytes)
+    iv_from_encrypted_data = encrypted_data[:16]
+
+    # Check if the IV already exists in the dictionary
+    iv_hex = iv_from_encrypted_data.hex()
+    if iv_hex in iv_dict:
+        iv_dict[iv_hex].append(filename)
+    else:
+        iv_dict[iv_hex] = [filename]
+
+# Print files with matching IVs
+for iv, files in iv_dict.items():
+    if len(files) > 1:
+        print(f"IV: {iv}")
+        print("Files with matching IV:")
+        for file in files:
+            print(f"  - {file}")
+```
+</details>
