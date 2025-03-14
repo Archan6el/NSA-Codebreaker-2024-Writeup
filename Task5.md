@@ -417,7 +417,7 @@ USB Password to 570RM: `REpUJtDj6C6q8A8lfAPM1C749yBATyjHZBder8fIMAyxxWoXRNRazVfd
 
 Our main focus are those AWS passwords though. Due to the interesting set up, I start googling, and lo' and behold, I find something very promising. 
 
-[Hastad's Broadcast Attack](https://docs.xanhacks.xyz/crypto/rsa/08-hastad-broadcast-attack/) is an attack that utilizes the Chinese Remainder Theorem (CRT). Essentially, if the same message is sent to at least 3 others, and their public keys all have a small public exponent (ideally `e = 3`), we get a system of equations that we can solve with CRT. [This](https://github.com/ashutosh1206/Crypton/blob/master/RSA-encryption/Attack-Hastad-Broadcast/README.md) also provides more info if you'd like to learn more. 
+[Hastad's Broadcast Attack](https://docs.xanhacks.xyz/crypto/rsa/08-hastad-broadcast-attack/) is an attack that utilizes the Chinese Remainder Theorem (CRT). Essentially, if the same message is sent to at least 3 others, and their public keys all have the same small public exponent (ideally `e = 3`), we get a system of equations that we can solve with CRT. [This](https://github.com/ashutosh1206/Crypton/blob/master/RSA-encryption/Attack-Hastad-Broadcast/README.md) also provides more info if you'd like to learn more. 
 
 This is *exactly* what's going on here!
 
