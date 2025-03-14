@@ -36,7 +36,7 @@ We get a ton of files, most of which are unimportant:
 
 ![image](https://github.com/user-attachments/assets/92056065-5819-4621-8ec0-9ffdd73d5789)
 
-The spreadsheet is gigantic, with 11,550 rows. No way are we going through that by hand. 
+The spreadsheet is gigantic, with 11,550 rows. No way are we going through each row one by one. 
 
 Briefly scrolling through the spreadsheet, there's a lot of things that are repeated, specifically emails and addresses. I figured that anything malicious would probably only show up once, so using the `UNIQUE` function in Excel, I isolated all unique entries and put them in their own column. Starting from the bottom upwards, most of the entries are order IDs, which make sense since they should be unique. However, the first odd entry when going from the bottom up is an address, `058 Flowers Square Apt. 948, Port Ryanshire, NE 05823`:
 
