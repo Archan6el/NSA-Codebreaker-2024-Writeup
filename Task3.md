@@ -280,7 +280,7 @@ We can find what parameters they expect from functions beginning with `otp/seedg
 
 ![image](https://github.com/user-attachments/assets/cb5b4297-721a-4dff-a685-844ab86a5a78)
 
-So for example, `GetSeed` expects a username and password
+So for example, a `GetSeed` request expects a username and password
 
 ![image](https://github.com/user-attachments/assets/7e688fff-d8d7-4062-a2db-1b4225c27fa7)
 
