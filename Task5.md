@@ -350,7 +350,7 @@ if __name__ == '__main__':
 ```
 </details>
 
-Taking a look at the `pm.py` file first, we can see that this is what's responsible for the `.passwords` directory. That weird hash directory indeed was a hash! The program stores passwords in a directory based on the md5 hash of the master password
+Taking a look at the `pm.py` file first, we can see that this corresponds to the `.passwords` directory. That weird hash directory indeed was a hash! The program stores passwords in a directory based on the md5 hash of the master password
 
 ![image](https://github.com/user-attachments/assets/28400eea-a8f0-4ded-a157-dc4a2d16e20c)
 
@@ -366,7 +366,7 @@ Since the master password is a md5 hash, `3ead1101919a08e7d7f345e92b1c66da`, I t
 
 Without the master password, we kind of can't really do anything here. Let's now take a look at `pidgin_rsa_encryption.py`
 
-Looking at the code, it's evident that `pidgin_rsa_encryption.py` is responsible for the `.purple` directory, which contained the chat message logs. 
+Looking at the code, it's evident that `pidgin_rsa_encryption.py` is related to the `.purple` directory, which contained the chat message logs. 
 
 ![image](https://github.com/user-attachments/assets/af1c0a02-5b7c-40a6-a7ec-fe35ebb36eee)
 
