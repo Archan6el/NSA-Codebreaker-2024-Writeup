@@ -827,7 +827,7 @@ Technically, we could just call `GetSeed` a bunch of times, but that would take 
 
 ![image](https://github.com/user-attachments/assets/7c21daea-de18-4a52-98bc-62015718c8fe)
 
-Or in other words, count 1 is always the seed `8074660958352453125`, count 2 is always the seed `3009302561299014827`, etc, etc every time. This is why count is one of the important keys in the JSON we have to submit, since it is tied to the correct seed. The fact that the same seeds are generated each time means that the random number generator is seeded, we just have to find what the seed is. 
+Or in other words, count 1 is always the seed `8074660958352453125`, count 2 is always the seed `3009302561299014827`, etc, etc every time. This is why count is one of the important keys in the JSON we have to submit, since it is tied to the correct seed. The fact that the same seeds are generated each time means that the random number generator is seeded, we just have to find what the rng seed is (sorry for saying seed so much there). 
 
 In Ghidra, we can find the function, `math/rand.(*Rand).Seed`, which is the Go function used to seed its random number generator. 
 
