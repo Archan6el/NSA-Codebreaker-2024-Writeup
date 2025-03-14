@@ -69,6 +69,10 @@ Now starting from this first file, we add it to our pool. We then follow the des
 
 Of course, I didn't want to do this by hand, so I made a bash script to do it. 
 
+<details>
+
+    <Summary>Click to expand mount-logseq.sh</Summary>
+    
 ```bash
 #!/bin/bash
 
@@ -128,6 +132,8 @@ while [ -n "$current_file" ]; do
     fi
 done
 ```
+
+</details>
 
 After running this bash script, we should have all files added to our pool. Running `zfs list`, we should see our mountpoint so that we know where to go to look at the final product. 
 
