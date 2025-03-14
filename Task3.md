@@ -640,7 +640,7 @@ So `param_8` is the username, and we can change the name accordingly. We'll rena
 
 If we look at the what dictates the loop, the loop is dependent on `i` being less than `param_9`. Well if we're taking chunks of the username each time, `param_9` is likely the length of the username, since it would stop the loop if `i` is greater than or equal to the username's length. We can change `param_9` accordingly. 
 
-The function then Xor's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if they are equal, and then prints the `user authenticated...` message we saw before in Binja. We'll rename `uVar4` to `target`. 
+The function then XOR's the username chunk and whatever `uVar4` is. `uVar4` is checked with the value `0x7032f1e8` in each iteration to see if they are equal, and then prints the `user authenticated...` message we saw before in Binja. We'll rename `uVar4` to `target`. 
 
 After our variable renaming, we now have this code. 
 
@@ -809,11 +809,11 @@ Let's look at what it's doing. It gets a little confusing since the function ini
   } while( true );
 ```
 
-In each iteration, it Xor's `target` with the 4 byte chunk. 
+In each iteration, it XOR's `target` with the 4 byte chunk. 
 
 `target = (ulong)((uint)target ^ chunk);`
 
-After it finishes looping through the username and doing all the Xor logic, it checks to see if the final result equals `0x7032f1e8`. 
+After it finishes looping through the username and doing all the XOR logic, it checks to see if the final result equals `0x7032f1e8`. 
 
 ```c
 if ((uint)target == 0x7032f1e8) {
@@ -821,7 +821,7 @@ if ((uint)target == 0x7032f1e8) {
 	return param_7[2];
 }
 ```
-So our goal is to find the username, seed, and count that once going through the Xor logic, will equal `0x7032f1e8`. Based on the `shredded.jpg` image, it seems that we already have the correct username, which is `jasper_04044`. We just need to find the seed and count. 
+So our goal is to find the username, seed, and count that once going through the XOR logic, will equal `0x7032f1e8`. Based on the `shredded.jpg` image, it seems that we already have the correct username, which is `jasper_04044`. We just need to find the seed and count. 
 
 Technically, we could just call `GetSeed` a bunch of times, but that would take forever. The simplest way would be to recreate all this logic and run it locally. There's just one issue, which is the randomly generated number. I thought it would change each time, which would make it impossible to do locally, but after resetting the `server` executable, we can see that the seed values at the corresponding counts are the same each time
 
@@ -843,7 +843,7 @@ If we run this, we immediately hit the breakpoint, and we can get our seed value
 
 It's `0x378f96687bfa0`
 
-We have everything we need, let's start making our solve. We will continuously generate numbers using the seeded random number generator, take it and the username `jasper_04044`, go through the Xor logic, and check to see if it equals `0x7032f1e8`. We'll code the solve in Go since the `server` executable uses specifically Go's random number generator. 
+We have everything we need, let's start making our solve. We will continuously generate numbers using the seeded random number generator, take it and the username `jasper_04044`, go through the XOR logic and loop that we discussed earlier, and check to see if the final result equals `0x7032f1e8`. We'll code the solve in Go since the `server` executable uses specifically Go's random number generator. 
 
 <details>
 	<Summary><b>Click to expand solve.go</b></Summary>
