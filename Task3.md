@@ -630,7 +630,7 @@ One more run to make sure we know what's going on.
 
 ![image](https://github.com/user-attachments/assets/1b19f0c0-18ec-47e3-8a95-c5be2fcf9e58)
 
-Sure enough, this is the number `3009302561299014827`, which was our seed from the last run. So we can confidently say that the random number generated is the seed, so we can rename `lVar1` to `seed` in Ghidra. 
+Sure enough, this is the number `3009302561299014827`, which was our seed from the last run. So we can confidently say that the random number generated is the seed, so we can rename `lVar1` to `seed` in Ghidra. We also keep in mind that `param_7[2]` is where the seed is stored. 
 
 The logic seems to be indexing or taking chunks of `param_8` and assigning it to `uVar6`. `param_8` is assigned to `unaff_RBX`. If we look in gdb to see what's at `rbx`, we see that it's our username
 
