@@ -826,7 +826,11 @@ print("No dice")
 ```
 </details>
 
-Running this took a while. I just ran it and then went to watch the cfb playoffs as it was running. After coming back to check on the progress, we did indeed find the password!: `*g55.^y$Te*XLWX-4;`
+Running this took a while. I just ran it and then went to watch the cfb playoffs as it was running. After coming back to check on the progress, we get this output:
+
+![image](https://github.com/user-attachments/assets/e57f6e9e-2d7b-4b43-b600-a661980ecc37)
+
+We got the password! The program didn't output "incorrect" or "Success", and shows that after submitting the correct password, it tries to mount the drive but does not have the correct permissions, so it went through the unexpected output `else` branch in our program instead. Regardless, we have the password, which is `*g55.^y$Te*XLWX-4;`
 
 Submitting this solves Task 5 for us, and we are now high performers!
 
