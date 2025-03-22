@@ -162,7 +162,7 @@ We are adding the ZFS volumes incrementally, and then taking a look at the final
 I modify our bash script from earlier to essentially mount the filesystem after we add a new `logseq` file so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
 
 <details>
-<summary>Click to expand incremental-mount-logseq.sh</summary>
+<summary><i><ins>Click to expand incremental-mount-logseq.sh</ins></i></summary>
     
 ```bash
 #!/bin/bash
