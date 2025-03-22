@@ -759,7 +759,7 @@ We end up with this brute force script:
 
 <details>
 
- <Summary>Click to expand brute.py</Summary>
+ <Summary><i><ins>Click to expand brute.py</ins></i></Summary>
 
  ```Python
 
