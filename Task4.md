@@ -46,7 +46,7 @@ We can send a simple get request, using the given `.crt` and `.key` file to make
 We can write a Python script to automate going through the audit log to find  `gagpt -m ...` lines, which we can use in our get request. I save our responses to a file named `queries_and_responses.txt` so that we can take a look at them once the script is done executing. 
 
 <details>
-	<Summary><b>Click to expand solve.py</b></Summary>
+	<Summary><i><ins>Click to expand solve.py</ins></i></Summary>
 
 ```Python
 import re
@@ -143,7 +143,7 @@ This means that we're missing out on a whole lot of responses!
 I modified our already existing script to now allow us to specify what the query is using the variable `cleaned_query`. This allows us to clean up a malformed query we find and to individually get its response. I save the responses to a file named `cleaned.txt`. 
 
 <details>
-	<Summary><b>Click to expand solve-specific.py</b></Summary>
+	<Summary><i><ins>Click to expand solve-specific.py</ins></i></Summary>
 	
 ```Python
 
