@@ -161,6 +161,9 @@ We are adding the ZFS volumes incrementally, and then taking a look at the final
 
 I modify our bash script from earlier to essentially mount the filesystem after we add a new `logseq` file so that we can take a look at each step of the process. In other words, taking a snapshot of the filesystem at each step as we add each `logseq` file.
 
+<details>
+<summary>Click to expand incremental-mount-logseq.sh</summary>
+    
 ```bash
 #!/bin/bash
 
@@ -243,6 +246,7 @@ for i in {1..20}; do
     done
 done
 ```
+</details>
 
 In the script, I mounted everything in `/mnt/task2pool`. If we go there and run `ls`, we see 20 snapshot directories, which makes sense since there are 20 `logseq` files:
 
