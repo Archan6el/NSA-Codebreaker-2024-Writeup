@@ -73,7 +73,7 @@ The text refers to `auth_service/AuthService`. `auth_service` is likely our pack
 Now we have all we need, let's create our proto file. I name mine `ping.proto` since we're trying to get the ping function to work specifically, and set my `go_package` to `/seedGeneration`, since we saw some references to `seedGeneration` in those `main` functions we found earlier. The name of your proto file and `go_package` doesn't matter though. 
 
 <details>
-	<Summary> <b>Click to expand ping.proto</b> </Summary>
+	<Summary> <i><ins>Click to expand ping.proto</ins></i> </Summary>
 	
 ```
 syntax = "proto3";
@@ -161,7 +161,7 @@ With our `.proto` file made, we run the `protoc` command to compile it into some
 Now let's create the auth server. In my code, I set up some sample checks for `AuthenticateRequest` and `VerifyOTP` just to see if they do anything. Most importantly, we run the server on port 50052. 
 
 <details>
-	<Summary><b>Click to expand auth_server.go</b></Summary>
+	<Summary><i><ins>Click to expand auth_server.go</ins></i></Summary>
 	
 ```Go
 package main
@@ -291,7 +291,7 @@ What's our `package` and `service` names this time though? `package` I'll just c
 Now we can make our `.proto` file! I named mine `seedGeneration.proto`
 
 <details>
-	<Summary><b>Click to expand seedGeneration.proto</b></Summary>
+	<Summary><i><ins>Click to expand seedGeneration.proto</ins></i></Summary>
 	
 ```
 syntax = "proto3";
@@ -360,7 +360,7 @@ This is where the `shredded.jpg` image comes into play. I was thinking of what `
 Let's make the client now in Python. I make some code to call `StressTest` too but I comment it out for now. I mainly want to see what `GetSeed` does. 
 
 <details>
-<Summary><b>Click to expand client.py</b></Summary>
+<Summary><i><ins>Click to expand client.py</ins></i></Summary>
 
 ```python
 import grpc
@@ -443,7 +443,7 @@ If we run our client and call `GetSeed`, we hit our breakpoint
 So username and password is passed into `auth`. Additionally, some kind of value, `c` is passed in as well to both `GetSeed` and `auth`. For our next step, let's see if we can rename some variables in the `auth` function on Ghidra to make it easier to read
 
 <details>
-<Summary><b>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
+<Summary><i><ins>Click to expand main.(*SeedgenAuthClient).auth</ins></i></Summary>
 
 ```c
 long main.(*SeedgenAuthClient).auth
@@ -645,7 +645,7 @@ The function then XOR's the username chunk and whatever `uVar4` is. `uVar4` is c
 After our variable renaming, we now have this code. 
 
 <details>
-<Summary><b>Click to expand main.(*SeedgenAuthClient).auth</b></Summary>
+<Summary><i><ins>Click to expand main.(*SeedgenAuthClient).auth</ins></i></Summary>
 
 ```c
 long main.(*SeedgenAuthClient).auth
@@ -846,7 +846,7 @@ It's `0x378f96687bfa0`
 We have everything we need, let's start making our solve. We will continuously generate numbers using the seeded random number generator, take it and the username `jasper_04044`, go through the XOR logic and loop that we discussed earlier, and check to see if the final result equals `0x7032f1e8`. We'll code the solve in Go since the `server` executable uses specifically Go's random number generator. 
 
 <details>
-	<Summary><b>Click to expand solve.go</b></Summary>
+	<Summary><i><ins>Click to expand solve.go</ins></i></Summary>
 
  ```Go
 package main
@@ -962,7 +962,7 @@ What does this mean for us? Even though `7571067976073007827` is the correct see
 I tweak the code to print the next seed after we pass the Xor logic
 
 <details>
-<Summary><b>Click to expand solve.go</b></Summary>
+<Summary><i><ins>Click to expand solve.go</ins></i></Summary>
 
  ```Go
 package main
