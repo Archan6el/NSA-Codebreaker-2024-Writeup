@@ -71,7 +71,7 @@ Of course, I didn't want to do this by hand, so I made a bash script to do it.
 
 <details>
 
-<summary><i><u>Click to expand mount-logseq.sh</u></i></summary>
+<summary style="font-style: italic; text-decoration: underline;">Click to expand mount-logseq.sh</summary>
     
 ```bash
 #!/bin/bash
