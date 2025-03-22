@@ -71,7 +71,7 @@ Thankfully, we have another tool for this, [PyLingual](https://pylingual.io/). T
 This gets us the following Python code for each file:
 
 <details>
-	<Summary><b>Click to expand pidgin_rsa_encryption.py</b></Summary>
+	<Summary><i><ins>Click to expand pidgin_rsa_encryption.py</ins></i></Summary>
 
  ```Python
 # Decompiled with PyLingual (https://pylingual.io)
@@ -205,7 +205,7 @@ if __name__ == '__main__':
 </details>
 
 <details>
-	<Summary><b>Click to expand pm.py</b></Summary>
+	<Summary><i><ins>Click to expand pm.py</ins></i></Summary>
   
 ```Python
 # Decompiled with PyLingual (https://pylingual.io)
@@ -434,7 +434,7 @@ Look at that, they all have a public exponent of 3! This means that we can indee
 We can write a Python script to do this. Using the knowledge of the padding used from `pidgin_rsa_encryption.py`, the public keys, and the base64 encoded messages, we end up with the following script
 
 <details>
-	<Summary><b>Click to expand hastads_broadcast_attack.py</b></Summary>
+	<Summary><i><ins>Click to expand hastads_broadcast_attack.py</ins></i></Summary>
 
  ```Python
 
@@ -510,7 +510,7 @@ With this in mind, we can go through all the passwords that are stored in the `.
 We can write a Python script to do this
 
 <details>
-	<Summary>Click to expand find_IV.py</Summary>
+	<Summary><i><ins>Click to expand find_IV.py</ins></i></Summary>
 	
 ```Python
 import os
@@ -564,7 +564,7 @@ After further research, I find a straightforward way to exploit this vulnerabili
 Let's put this to the test shall we? Again, we can write a Python script to do this. We'll take the encrypted AWS password and its known plaintext and XOR them together. This in theory should get us the keystream. We can then XOR the keystream and the encrypted USB password to get the plaintext USB password. 
 
 <details>
-<Summary>Click to expand reverse_AES_CFB.py</Summary>
+<Summary><i><ins>Click to expand reverse_AES_CFB.py</ins></i></Summary>
 
  ```Python
 # Path to the ciphertext files
@@ -630,7 +630,7 @@ I end up with this script and dummy USB password, and I find something very intr
 
 <details>
 
- <Summary>Click to expand testing.py</Summary>
+ <Summary><i><ins>Click to expand testing.py</ins></i></Summary>
 
  ```Python
 
