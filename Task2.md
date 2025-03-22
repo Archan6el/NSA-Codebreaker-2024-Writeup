@@ -71,11 +71,11 @@ Of course, I didn't want to do this by hand, so I made a bash script to do it.
 
 <details>
 
-<Summary> 
+<summary> 
 
-   <u>**Click to expand mount-logseq.sh**</u> 
+<u>**Click to expand mount-logseq.sh**</u> 
    
-</Summary>
+</summary>
     
 ```bash
 #!/bin/bash
