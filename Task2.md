@@ -73,7 +73,7 @@ Of course, I didn't want to do this by hand, so I made a bash script to do it.
 
 <Summary> 
    
-    **Click to expand mount-logseq.sh**
+   **Click to expand mount-logseq.sh**
     
 </Summary>
     
