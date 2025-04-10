@@ -1,6 +1,6 @@
 # NSA-Codebreaker-2024
 
-This is my writeup of the 2024 NSA Codebreaker Challenges
+These are my writeups of the 2024 NSA Codebreaker Challenges
 
 **Background:**
 
