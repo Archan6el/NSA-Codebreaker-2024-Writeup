@@ -44,7 +44,7 @@ After Ghidra does its analysis, we find that `server` is a Go binary. Trying to 
 
 However, there isn't really anything interesting there to build off of within them, but we'll keep our eye on these `main` functions. 
 
-After some more snooping around, I stumble upon a jackpot of interesting functions each beginning with `auth`. Since the `server` executable is trying to ping what it calls an *auth* server, we're probably in the right place. Specifically here for these functions under `authServiceClient`, these seem to outline the functions that the executable is able to call on the auth server, which are `Authenticate`, `Logout`, `Ping` (the one we're looking for), `RefreshToken`, `RegisterOTPSeed`, and `VerifyOTP`. So 6 in total. 
+After some more snooping around, I stumble upon a jackpot of interesting functions each beginning with `auth`. Since the `server` executable is trying to ping what it calls an *auth* server, we're probably in the right place. Specifically here for these functions under `authServiceClient`, these seem to outline the RPC methods that the executable is able to call on the auth server, which are `Authenticate`, `Logout`, `Ping` (the one we're looking for), `RefreshToken`, `RegisterOTPSeed`, and `VerifyOTP`. So 6 in total. 
 
 ![image](https://github.com/user-attachments/assets/91b35027-1d2e-4318-9f49-9fa36ced77d4)
 
@@ -52,15 +52,15 @@ Also under these `auth` functions, we can find functions that correspond to the 
 
 ![image](https://github.com/user-attachments/assets/34702a39-7b8e-4da5-808e-6b1e152fb103)
 
-We see some sub-functions that shed light on what parameters each function is expecting for requests and responses. For example, for the `AuthRequest` function, there are sub-functions called `GetPassword` and `GetUsername`, which means that it probably expects a password and username as parameters in the request. 
+We see some sub-functions that shed light on what parameters or fields each method is expecting for requests and responses. For example, for the `AuthRequest` function, there are sub-functions called `GetPassword` and `GetUsername`, which means that it probably expects a password and username as fields in the request. 
 
 ![image](https://github.com/user-attachments/assets/b5d4da74-1977-4e9b-aff9-8bab1b202d9b)
 
-However, the most important thing for us is the `PingRequest` function, and if we take a look, it has a `GetPing` sub-function, which means it probably expects that as a parameter in its request. 
+However, the most important thing for us is the `PingRequest` function, and if we take a look, it has a `GetPing` sub-function, which means it probably expects that as a field in its request. 
 
 ![image](https://github.com/user-attachments/assets/0bf781f9-44fe-4fef-919c-72c4987232c6)
 
-We can deduce the parameters for all 6 functions here in the same way. So we can start trying to make the auth server now, but how?
+We can deduce the fields for all 6 methods here in the same way. So we can start trying to make the auth server now, but how?
 
 Since the `server` executable is in Go, we'll make the auth server in Go too. Go's implementation of the `rpc` protocol is `grpc`, and [this](https://pascalallen.medium.com/how-to-build-a-grpc-server-in-go-943f337c4e05) guide was helpful in getting started. Essentially, we first need to create a `.proto` file in which we define each of our functions, as well as their request and response parameters. That should be relatively easy to do based on what we found in Ghidra. The issue however is the `package` and `service` name that each `.proto` file needs. This is a little problematic because specifically the `service` needs to match on both the client and the server. 
 
